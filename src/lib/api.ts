@@ -15,6 +15,8 @@ export interface Movie {
     genre_ids?: number[];
     media_type?: 'movie' | 'tv';
     seasons?: { season_number: number; name: string; episode_count: number }[];
+    runtime?: number; // Runtime in minutes (for movies)
+    genres?: { id: number; name: string }[]; // Full genre objects (from details API)
 }
 
 export const fetchTrendingSeries = async (): Promise<Movie[]> => {
