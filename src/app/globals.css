@@ -1,0 +1,168 @@
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* Brand Colors */
+  /* Brand Colors */
+  --primary: #e50914;
+  /* Netflix Red */
+  --primary-glow: rgba(229, 9, 20, 0.5);
+  --secondary: #b20710;
+  /* Darker Red */
+  --secondary-glow: rgba(178, 7, 16, 0.4);
+
+  /* UI Colors */
+  --card-bg: #161616;
+  --card-hover: #1f1f1f;
+  --border: #333333;
+  --text-muted: #a1a1a1;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Utilities */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  border-radius: 6px;
+  /* Consistent rounded corners */
+  font-weight: 700;
+  /* Bold for professional look */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 1rem;
+  line-height: 1.5;
+  gap: 8px;
+  /* Spacing between icon and text */
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #e50914 0%, #b20710 100%);
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #ff0a16 0%, #c7080f 100%);
+  box-shadow: 0 8px 25px rgba(229, 9, 20, 0.6);
+  transform: scale(1.05) translateY(-2px);
+}
+
+.btn-secondary {
+  background: rgba(109, 109, 110, 0.5) !important;
+  backdrop-filter: blur(10px);
+  color: white !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-secondary:hover {
+  background: rgba(109, 109, 110, 0.7) !important;
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.03) translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  color: var(--foreground);
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: white;
+}
+
+
+.text-gradient {
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Mobile Button Fixes - Keep text in one line */
+@media (max-width: 768px) {
+  .btn {
+    padding: 10px 18px;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    /* Prevent text wrapping inside buttons */
+  }
+}
+
+/* Page Transitions */
+@keyframes pageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.page-transition {
+  animation: pageEnter 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Utility to hide elements on large screens (Desktop) */
+@media (min-width: 1024px) {
+  .d-lg-none {
+    display: none !important;
+  }
+}

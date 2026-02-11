@@ -1,0 +1,155 @@
+/* Professional OTT Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    transition: all 0.4s ease-in-out;
+    padding: 0 4%;
+    /* Responsive horizontal padding */
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.scrolled {
+    background: #141414;
+    /* Standard Netflix/OTT dark background */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hidden {
+    transform: translateY(-100%);
+}
+
+.navContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 40px;
+    text-decoration: none;
+}
+
+
+
+@media (max-width: 768px) {
+    .hideOnMobile {
+        display: none !important;
+    }
+}
+
+/* Desktop Navigation Links */
+.desktopNav {
+    display: none;
+    align-items: center;
+    gap: 20px;
+    margin-right: auto;
+    /* Pushes Links to the left, near logo */
+}
+
+.link,
+.navLink {
+    color: #e5e5e5;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+
+.link:hover,
+.navLink:hover {
+    color: #ffffff;
+    font-weight: 700;
+    /* Subtle bold on hover */
+}
+
+/* Right Side Actions */
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Desktop Only Elements */
+.desktopOnly {
+    display: none;
+}
+
+/* Search Bar Wrapper */
+.desktopSearch {
+    display: none;
+}
+
+/* Mobile Menu Button */
+.menuBtn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+/* Mobile Navigation Dropdown */
+.mobileNav {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: #141414;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-top: 1px solid #333;
+    gap: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.mobileNav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 10px 0;
+    border-bottom: 1px solid #222;
+}
+
+/* User Profile */
+.userProfile {
+    transition: transform 0.2s;
+}
+
+.userProfile:hover {
+    transform: scale(1.05);
+}
+
+/* Breakpoints */
+@media (min-width: 768px) {
+    .desktopNav {
+        display: flex;
+    }
+
+    .desktopOnly {
+        display: flex;
+        align-items: center;
+    }
+
+    .desktopSearch {
+        display: block;
+    }
+
+    .menuBtn {
+        display: none;
+    }
+}

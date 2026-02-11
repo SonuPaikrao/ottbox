@@ -1,0 +1,116 @@
+.card {
+    display: block;
+    width: 100%;
+    /* Ensure it never exceeds grid cell */
+    max-width: 100%;
+    min-width: 0;
+    transition: transform 0.3s ease;
+    position: relative;
+    will-change: transform;
+    /* Optimize hover animation */
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    z-index: 10;
+}
+
+.card:hover .imageWrapper {
+    box-shadow: 0 0 25px rgba(229, 9, 20, 0.4), 0 0 40px rgba(229, 9, 20, 0.2);
+    border: 2px solid var(--primary);
+}
+
+.imageWrapper {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 2/3;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    will-change: box-shadow, border-color;
+    /* Optimize hover effects */
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .image {
+    transform: scale(1.05);
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover .overlay {
+    opacity: 1;
+}
+
+.playBtn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 0 20px var(--primary-glow);
+    transform: scale(0);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card:hover .playBtn {
+    transform: scale(1);
+}
+
+.rating {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.info {
+    padding-top: 10px;
+}
+
+.title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--foreground);
+}
+
+.meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}

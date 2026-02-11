@@ -1,0 +1,50 @@
+.mobileNav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: none;
+    /* Hidden by default on Desktop */
+    justify-content: space-around;
+    align-items: center;
+    z-index: 2000;
+    padding-bottom: env(safe-area-inset-bottom);
+    /* Safe area for modern phones */
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.navItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    /* Darker grey for inactive */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    width: 25%;
+    height: 100%;
+    opacity: 0.7;
+}
+
+.active {
+    color: white;
+    /* Bright white for active */
+    opacity: 1;
+}
+
+.active svg {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .mobileNav {
+        display: flex;
+    }
+}
