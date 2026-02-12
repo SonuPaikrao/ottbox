@@ -10,6 +10,13 @@ export default function InstallPrompt() {
     const [isIOS, setIsIOS] = useState(false);
 
     useEffect(() => {
+        // Explicitly register Service Worker to ensure PWA criteria are met
+        if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then((registration) => console.log('SW registered with scope:', registration.scope))
+                .catch((error) => console.error('SW registration failed:', error));
+        }
+
         // Check for iOS
         const isIosDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
         setIsIOS(isIosDevice);
@@ -29,9 +36,6 @@ export default function InstallPrompt() {
         };
 
         window.addEventListener('beforeinstallprompt', handler);
-
-        // For iOS, show prompts if not standalone (optional logic can be added here)
-        // For now, only Android/Desktop Chrome triggers beforeinstallprompt
 
         return () => window.removeEventListener('beforeinstallprompt', handler);
     }, []);
