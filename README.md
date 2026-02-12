@@ -39,13 +39,13 @@
 ## 🚀 **Live Demo**
 
 <div align="center">
-  <a href="https://ott-box-nine.vercel.app/" target="_blank">
-    <img src="https://img.shields.io/badge/🌐_Live_Demo-Coming_Soon-yellow?style=for-the-badge&logo=vercel" alt="Live Demo">
+  <a href="https://ott-box-weld.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Website-green?style=for-the-badge&logo=vercel" alt="Live Demo">
   </a>
   
   <br><br>
   
-  <h4>🎯 <strong>Deployment In Progress</strong></h4>
+  <h4>🎯 <a href="https://ott-box-weld.vercel.app/" target="_blank">👉 Click Here to Visit Live Website 👈</a></h4>
   
   <p><strong>✨ Full streaming experience with unlimited content! ✨</strong></p>
   
