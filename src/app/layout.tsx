@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     template: "%s | OTT Box"
   },
   description: "Watch the latest movies and series in high quality. No ads, just entertainment.",
+  manifest: "/manifest.json",
   keywords: ["streaming", "movies", "series", "watch online", "ott box", "netflix clone"],
   openGraph: {
     title: "OTT Box | Premium Streaming",
@@ -67,21 +68,6 @@ export default function RootLayout({
             </ToastProvider>
           </WatchlistProvider>
         </AuthProvider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                // FORCE UNREGISTER to clear old cache
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                  for(let registration of registrations) {
-                    registration.unregister();
-                    console.log('Service Worker unregistered to force refresh');
-                  }
-                });
-              }
-            `,
-          }}
-        />
       </body>
     </html>
   );
