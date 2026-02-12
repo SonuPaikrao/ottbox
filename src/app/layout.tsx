@@ -19,9 +19,9 @@ export const metadata: Metadata = {
   description: "Watch the latest movies and series in high quality. No ads, just entertainment.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icons/icon-192x192.png", // Fallback for Vercel/Browser
-    shortcut: "/icons/icon-192x192.png",
-    apple: "/icons/icon-192x192.png", // Important for iOS
+    icon: "/file.svg", // Using SVG as requested
+    shortcut: "/file.svg",
+    apple: "/icons/icon-192x192.png", // Keep PNG for Apple (iOS doesn't support SVG touch icons well)
   },
   keywords: ["streaming", "movies", "series", "watch online", "ott box", "netflix clone"],
   openGraph: {
