@@ -38,9 +38,19 @@ export default function MobileNav() {
                     <Search size={24} strokeWidth={2.5} />
                 </Link>
 
-                <Link href="/watchlist" className={`${styles.navItem} ${isActive('/watchlist') ? styles.active : ''}`}>
+                <div
+                    onClick={() => {
+                        if (user) {
+                            router.push('/watchlist');
+                        } else {
+                            setShowLogin(true);
+                        }
+                    }}
+                    className={`${styles.navItem} ${isActive('/watchlist') ? styles.active : ''}`}
+                    style={{ cursor: 'pointer' }}
+                >
                     <List size={24} strokeWidth={2.5} />
-                </Link>
+                </div>
 
                 <button
                     onClick={handleProfileClick}
