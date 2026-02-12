@@ -52,6 +52,8 @@ export const viewport = {
   themeColor: '#e50914',
 };
 
+import InstallPrompt from "@/components/Shared/InstallPrompt";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -68,6 +70,7 @@ export default function RootLayout({
                 <main style={{ minHeight: '100vh' }}>
                   {children}
                 </main>
+                <InstallPrompt />
                 <MobileNav />
               </HistoryProvider>
             </ToastProvider>
