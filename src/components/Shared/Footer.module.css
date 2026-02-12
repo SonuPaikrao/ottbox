@@ -137,13 +137,25 @@
 
 @media (max-width: 768px) {
     .grid {
-        grid-template-columns: 1fr;
-        gap: 40px;
+        grid-template-columns: 1fr 1fr;
+        /* 2 Columns for links */
+        gap: 30px 20px;
+        /* Row gap, Col gap */
         text-align: center;
     }
 
     .brandCol {
+        grid-column: 1 / -1;
+        /* Brand takes full width */
         align-items: center;
+        margin-bottom: 20px;
+    }
+
+    /* Make Connect column full width on very small screens if needed, 
+       but for 2-col look, it might sit in one slot or span. 
+       Let's make Connect span full width too if it has the social icons */
+    .col:last-child {
+        grid-column: 1 / -1;
     }
 
     .socials {
