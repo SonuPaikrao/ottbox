@@ -32,7 +32,8 @@ const genres = [
   { id: '10768', name: 'War & Politics' },
 ];
 
-export default async function Home({ searchParams }: { searchParams: { genre?: string, type?: 'movie' | 'tv' } }) {
+export default async function Home(props: { searchParams: Promise<{ genre?: string, type?: 'movie' | 'tv' }> }) {
+  const searchParams = await props.searchParams;
   const { genre, type } = await searchParams;
 
   // Determine effective type and genre
