@@ -8,6 +8,14 @@ export default function SplashScreen() {
     const [animateOut, setAnimateOut] = useState(false);
 
     useEffect(() => {
+        // Check if running as PWA (standalone)
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+
+        if (!isStandalone) {
+            setShow(false); // Hide immediately if not PWA
+            return;
+        }
+
         // Prevent scrolling while splash is visible
         document.body.style.overflow = 'hidden';
 
