@@ -73,8 +73,10 @@ export default function VideoPlayer({
                 src={src}
                 className={styles.iframe}
                 frameBorder="0"
-                allowFullScreen
-                allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write;"
+                allowFullScreen={true}
+                allow="autoplay; fullscreen *; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write;"
+                referrerPolicy="origin"
+                title="Video Player"
             />
         </div>
     );
