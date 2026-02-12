@@ -16,15 +16,17 @@ const CastList = dynamic(() => import('@/components/Title/CastList'));
 const TitleActions = dynamic(() => import('@/components/Title/TitleActions'));
 
 type Props = {
-    params: { id: string },
-    searchParams: { type?: 'movie' | 'tv' }
+    params: Promise<{ id: string }>,
+    searchParams: Promise<{ type?: 'movie' | 'tv' }>
 }
 
 export async function generateMetadata(
-    { params, searchParams }: Props,
+    props: Props,
 ): Promise<Metadata> {
-    const { id } = await params;
-    const { type } = await searchParams;
+    const params = await props.params;
+    const searchParams = await props.searchParams;
+    const { id } = params;
+    const { type } = searchParams;
     const movie = await fetchMovieDetails(id, type);
 
     if (!movie) {
@@ -43,9 +45,11 @@ export async function generateMetadata(
     };
 }
 
-export default async function TitlePage({ params, searchParams }: { params: { id: string }, searchParams: { type?: 'movie' | 'tv' } }) {
-    const { id } = await params;
-    const { type } = await searchParams;
+export default async function TitlePage(props: { params: Promise<{ id: string }>, searchParams: Promise<{ type?: 'movie' | 'tv' }> }) {
+    const params = await props.params;
+    const searchParams = await props.searchParams;
+    const { id } = params;
+    const { type } = searchParams;
 
     const movie = await fetchMovieDetails(id, type);
     const similarMovies = await fetchSimilarMovies(parseInt(id));

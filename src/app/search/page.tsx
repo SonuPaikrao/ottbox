@@ -5,12 +5,11 @@ import Link from "next/link";
 import SearchInput from "@/components/Shared/SearchInput";
 import SearchFilterBar from "@/components/Search/SearchFilterBar";
 
-export default async function SearchPage({
-    searchParams,
-}: {
-    searchParams: { [key: string]: string | string[] | undefined };
+export default async function SearchPage(props: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-    const params = await searchParams;
+    const searchParams = await props.searchParams;
+    const params = searchParams;
     const q = typeof params.q === 'string' ? params.q : '';
 
     // Determine if we are filtering or just searching
