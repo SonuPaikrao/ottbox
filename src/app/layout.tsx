@@ -54,6 +54,7 @@ export const viewport = {
 
 import InstallPrompt from "@/components/Shared/InstallPrompt";
 import SplashScreen from "@/components/Shared/SplashScreen";
+import Footer from "@/components/Shared/Footer";
 
 export default function RootLayout({
   children,
@@ -71,6 +72,7 @@ export default function RootLayout({
                 <main style={{ minHeight: '100vh' }}>
                   {children}
                 </main>
+                <Footer />
                 <InstallPrompt />
                 <MobileNav />
                 <SplashScreen />

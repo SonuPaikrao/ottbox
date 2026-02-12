@@ -1,0 +1,157 @@
+.footer {
+    background-color: #0a0a0a;
+    /* distinct from body background generally */
+    border-top: 1px solid #262626;
+    padding: 60px 0 30px;
+    margin-top: 80px;
+    color: #999;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 4%;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 50px;
+}
+
+.brandCol {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.brandName {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.5px;
+}
+
+.description {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 300px;
+}
+
+.colTitle {
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.navLinks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.navLinks a {
+    color: #999;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.navLinks a:hover {
+    color: #e50914;
+}
+
+.socials {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.socials a {
+    color: white;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.socials a:hover {
+    color: #e50914;
+    transform: translateY(-2px);
+}
+
+.creatorTag {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.highlight {
+    color: #e50914;
+    /* Brand color */
+    font-weight: 600;
+}
+
+.divider {
+    height: 1px;
+    background-color: #262626;
+    margin-bottom: 30px;
+}
+
+.bottomBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 0.85rem;
+}
+
+.bottomLinks {
+    display: flex;
+    gap: 20px;
+}
+
+.bottomLinks a {
+    color: #999;
+    text-decoration: none;
+}
+
+.bottomLinks a:hover {
+    text-decoration: underline;
+}
+
+.madeWith {
+    display: flex;
+    align-items: center;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+    }
+
+    .brandCol {
+        align-items: center;
+    }
+
+    .socials {
+        justify-content: center;
+    }
+
+    .bottomBar {
+        flex-direction: column-reverse;
+        text-align: center;
+    }
+}
