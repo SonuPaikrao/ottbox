@@ -53,6 +53,7 @@ export const viewport = {
 };
 
 import InstallPrompt from "@/components/Shared/InstallPrompt";
+import SplashScreen from "@/components/Shared/SplashScreen";
 
 export default function RootLayout({
   children,
@@ -72,6 +73,7 @@ export default function RootLayout({
                 </main>
                 <InstallPrompt />
                 <MobileNav />
+                <SplashScreen />
               </HistoryProvider>
             </ToastProvider>
           </WatchlistProvider>
