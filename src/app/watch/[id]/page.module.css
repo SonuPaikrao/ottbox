@@ -38,8 +38,7 @@
     aspect-ratio: 16/9;
     background: #000;
     margin-bottom: 20px;
-    border-radius: 12px;
-    overflow: hidden;
+    /* Removed border-radius and overflow to prevent touch clipping on mobile controls */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
