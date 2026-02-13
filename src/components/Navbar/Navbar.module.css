@@ -47,11 +47,6 @@
     .hideOnMobile {
         display: none !important;
     }
-    .hideCompletely {
-        display: none !important;
-    }
-    
-    /* Also hide on party page via global or specific class if needed */
 }
 
 /* Desktop Navigation Links */

@@ -66,7 +66,7 @@ export default function Navbar() {
             ${styles.navbar} 
             ${isScrolled ? styles.scrolled : ''} 
             ${!isVisible ? styles.hidden : ''}
-            ${pathname === '/shorts' || pathname.startsWith('/party/') ? styles.hideCompletely : ''} 
+            ${pathname === '/shorts' ? styles.hideCompletely : ''} 
         `}>
             <div className={`container ${styles.navContainer}`}>
 
