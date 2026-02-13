@@ -1,8 +1,7 @@
 import { fetchTrending, fetchTopRated, fetchTrendingSeries, fetchTrendingDay, discoverMoviesByGenre, fetchMovieDetails, Movie } from "@/lib/api";
 import dynamic from 'next/dynamic';
 import HeroSection from "@/components/Home/HeroSection";
-import Row from '@/components/Home/Row';
-import MoodSelector from '@/components/Home/MoodSelector';
+// import Row from '@/components/Home/Row'; // Keeping Row if needed later, or remove. User said remove mood feature.
 import Top10Row from "@/components/Home/Top10Row";
 import MovieCard from "@/components/Shared/MovieCard";
 import GenrePills from "@/components/Home/GenrePills";
@@ -100,11 +99,6 @@ export default async function Home(props: { searchParams: Promise<{ genre?: stri
     <div className={styles.main}>
       {/* Show Hero only if no specific genre filter is active */}
       {(!genre && !type) && <HeroSection movies={featuredMovies} />}
-
-      {/* Mood Selector - Below Hero */}
-      <div style={{ position: 'relative', zIndex: 15, marginTop: (!genre && !type) ? '-60px' : '20px' }}>
-        <MoodSelector />
-      </div>
 
       {/* Top10 and Continue Watching - Only on Home (Unfiltered) */}
       {!genre && !type && (
