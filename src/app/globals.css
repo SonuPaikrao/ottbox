@@ -61,8 +61,6 @@ a {
 
 /* Utilities */
 .container {
-  width: 100%;
-  /* Ensure full width up to max-width */
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 20px;
