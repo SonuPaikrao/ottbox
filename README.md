@@ -135,9 +135,14 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 To enable Google Sign-In:
 1. Go to **Authentication > Providers** in Supabase Dashboard.
 2. Enable **Google**.
-3. Add your **Client ID** and **Secret** from Google Cloud Console.
-4. Add this **Callback URL** in Supabase: `[Your-Project-URL]/auth/callback`
-5. Add this **Redirect URL** in Google Cloud Console: `https://[your-project-ref].supabase.co/auth/v1/callback`
+3. **In Google Cloud Console**:
+   - Create Credentials > OAuth Client ID.
+   - **Application Type**: Select **Web application** (NOT Chrome Extension).
+   - **Name**: "OttBox Web" or similar.
+4. Add **Authorized redirect URIs** in Google Cloud: 
+   - `https://wkfynjofytyfpvimlfno.supabase.co/auth/v1/callback`
+5. Copy **Client ID** and **Secret** to Supabase.
+
 
 ```
 
