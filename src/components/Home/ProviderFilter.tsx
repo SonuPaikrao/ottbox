@@ -68,7 +68,8 @@ export default function ProviderFilter() {
             </div>
 
             {/* Provider Logos */}
-            <div className="flex flex-row flex-nowrap overflow-x-auto gap-3 pb-4 hide-scrollbar snap-x snap-mandatory">
+            {/* Provider Logos */}
+            <div className="flex flex-row flex-nowrap overflow-x-auto gap-3 pb-4 hide-scrollbar snap-x snap-mandatory mb-6">
                 {providers.map((provider) => (
                     <button
                         key={provider.id}
@@ -88,35 +89,34 @@ export default function ProviderFilter() {
                     </button>
                 ))}
             </div>
-        </div>
 
-            {/* Content Slider */ }
-    <div className="relative min-h-[250px]">
-        {isLoading ? (
-            <div className="flex flex-row flex-nowrap gap-3 overflow-hidden">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="flex-shrink-0 w-[130px] md:w-[170px] h-[220px] md:h-[280px] bg-zinc-800 animate-pulse rounded-lg" />
-                ))}
-            </div>
-        ) : (
-            <>
-                <h3 className="text-lg font-semibold text-white mb-3 px-1">
-                    {providers.find(p => p.id === activeProvider)?.name} {mediaType === 'movie' ? 'Movies' : 'Series'}
-                </h3>
-                {/* Force horizontal scroll with flex-nowrap */}
-                <div className="flex flex-row flex-nowrap overflow-x-auto gap-3 pb-4 hide-scrollbar snap-x snap-mandatory">
-                    {content.map((item) => (
-                        <div key={item.id} className="flex-shrink-0 w-[130px] md:w-[170px] snap-start">
-                            <MovieCard movie={item} />
+            {/* Content Slider */}
+            <div className="relative min-h-[250px]">
+                {isLoading ? (
+                    <div className="flex flex-row flex-nowrap gap-3 overflow-hidden">
+                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                            <div key={i} className="flex-shrink-0 w-[130px] md:w-[170px] h-[220px] md:h-[280px] bg-zinc-800 animate-pulse rounded-lg" />
+                        ))}
+                    </div>
+                ) : (
+                    <>
+                        <h3 className="text-lg font-semibold text-white mb-3 px-1">
+                            {providers.find(p => p.id === activeProvider)?.name} {mediaType === 'movie' ? 'Movies' : 'Series'}
+                        </h3>
+                        {/* Force horizontal scroll with flex-nowrap */}
+                        <div className="flex flex-row flex-nowrap overflow-x-auto gap-3 pb-4 hide-scrollbar snap-x snap-mandatory">
+                            {content.map((item) => (
+                                <div key={item.id} className="flex-shrink-0 w-[130px] md:w-[170px] snap-start">
+                                    <MovieCard movie={item} />
+                                </div>
+                            ))}
+                            {content.length === 0 && (
+                                <div className="text-gray-400 py-10 w-full text-center">No content found for this provider.</div>
+                            )}
                         </div>
-                    ))}
-                    {content.length === 0 && (
-                        <div className="text-gray-400 py-10 w-full text-center">No content found for this provider.</div>
-                    )}
-                </div>
-            </>
-        )}
-    </div>
-        </section >
+                    </>
+                )}
+            </div>
+        </section>
     );
 }
