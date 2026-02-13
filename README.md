@@ -24,7 +24,7 @@
 
 ### 🔥 **Hot New Features**
 
-- 🎬 **Shorts/Reels Feed** - TikTok-style vertical video feed for immersive trailer discovery.
+- 🎬 **Shorts/Reels Feed** - Shorts/Reels-style vertical video feed for immersive trailer discovery.
 - 🛡️ **Smart Watchlist** - Protected watchlist with authentication and easy management.
 - 📱 **PWA Support** - Installable as a native app on all devices.
 - 👆 **Touch Interactions** - Swipe, scroll, and long-press gestures optimization.
