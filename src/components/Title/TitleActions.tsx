@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { Play, Film, X } from 'lucide-react';
 import WatchlistButton from '@/components/Shared/WatchlistButton';
+import PartyButton from './PartyButton'; // Import new component
 import { Movie, fetchMovieVideos } from '@/lib/api';
 import styles from './TitleActions.module.css';
 
@@ -61,22 +62,16 @@ export default function TitleActions({ movie }: TitleActionsProps) {
                     {loadingTrailer ? 'Loading...' : 'Trailer'}
                 </button>
 
-                <button
-                    onClick={() => {
-                        const roomId = Math.random().toString(36).substring(7);
-                        window.location.href = `/party/${roomId}?movieId=${movie.id}`;
-                    }}
-                    className={styles.trailerBtn}
-                    title="Start Watch Party"
-                >
-                    <span style={{ marginRight: '10px' }}>🎉</span>
-                    Party
-                </button>
+                {/* Auth Guard: Only show if user is logged in */}
+                {/* We need to check if 'movie' prop has the user context or useAuth hook. 
+                    TitleActions doesn't have useAuth yet, let's add it. */}
+                <PartyButton movie={movie} />
 
                 <div className={styles.watchlistWrapper}>
                     <WatchlistButton movie={movie} />
                 </div>
             </div>
+
 
             {/* Trailer Modal via Portal */}
             {showTrailer && trailerKey && mounted && createPortal(
