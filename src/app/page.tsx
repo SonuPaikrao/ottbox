@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import HeroSection from "@/components/Home/HeroSection";
 // import Row from '@/components/Home/Row'; // Keeping Row if needed later, or remove. User said remove mood feature.
 import Top10Row from "@/components/Home/Top10Row";
+import ProviderHub from "@/components/Home/ProviderHub";
 import MovieCard from "@/components/Shared/MovieCard";
 import GenrePills from "@/components/Home/GenrePills";
 import InfiniteMovieGrid from "@/components/Shared/InfiniteMovieGrid";
@@ -98,7 +99,12 @@ export default async function Home(props: { searchParams: Promise<{ genre?: stri
   return (
     <div className={styles.main}>
       {/* Show Hero only if no specific genre filter is active */}
-      {(!genre && !type) && <HeroSection movies={featuredMovies} />}
+      {(!genre && !type) && (
+        <>
+          <HeroSection movies={featuredMovies} />
+          <ProviderHub />
+        </>
+      )}
 
       {/* Top10 and Continue Watching - Only on Home (Unfiltered) */}
       {!genre && !type && (
