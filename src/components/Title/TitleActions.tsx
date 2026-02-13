@@ -61,6 +61,18 @@ export default function TitleActions({ movie }: TitleActionsProps) {
                     {loadingTrailer ? 'Loading...' : 'Trailer'}
                 </button>
 
+                <button
+                    onClick={() => {
+                        const roomId = Math.random().toString(36).substring(7);
+                        window.location.href = `/party/${roomId}?movieId=${movie.id}`;
+                    }}
+                    className={styles.trailerBtn}
+                    title="Start Watch Party"
+                >
+                    <span style={{ marginRight: '10px' }}>🎉</span>
+                    Party
+                </button>
+
                 <div className={styles.watchlistWrapper}>
                     <WatchlistButton movie={movie} />
                 </div>
