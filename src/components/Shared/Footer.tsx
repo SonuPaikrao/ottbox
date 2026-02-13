@@ -2,10 +2,17 @@
 
 import Link from 'next/link';
 import { Github, Twitter, Instagram, Heart, Coffee } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import styles from './Footer.module.css';
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
+    const pathname = usePathname();
+    const isWatchPage = pathname.startsWith('/watch/');
+    const isShortsPage = pathname === '/shorts';
+
+    // Don't render footer on watch or shorts pages
+    if (isWatchPage || isShortsPage) return null;
 
     return (
         <footer className={styles.footer}>
