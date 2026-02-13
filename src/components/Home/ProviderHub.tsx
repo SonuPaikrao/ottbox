@@ -148,18 +148,21 @@ export default function ProviderHub() {
                 </div>
             </div>
 
-            {/* Content Grid */}
-            <div className={styles.grid}>
+            {/* Content Row (Horizontal Scroll) */}
+            <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide snap-x relative z-10">
                 {loading ? (
                     // Skeleton Loading
-                    [...Array(10)].map((_, i) => (
-                        <div key={i} className="aspect-[2/3] bg-[#1a1a1a] rounded-xl animate-pulse" />
+                    [...Array(6)].map((_, i) => (
+                        <div key={i} className="min-w-[160px] md:min-w-[200px] aspect-[2/3] bg-[#1a1a1a] rounded-xl animate-pulse flex-shrink-0" />
                     ))
                 ) : (
                     movies.map((movie) => (
-                        <MovieCard key={movie.id} movie={movie} />
+                        <div key={movie.id} className="min-w-[160px] md:min-w-[200px] flex-shrink-0 snap-center">
+                            <MovieCard movie={movie} />
+                        </div>
                     ))
                 )}
+                {/* Load More / Pagination indicator could go here if needed, or just standard row behavior */}
             </div>
             {!loading && movies.length === 0 && (
                 <div className="w-full h-40 flex items-center justify-center text-gray-500">
