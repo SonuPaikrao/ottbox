@@ -6,6 +6,7 @@ import { Movie, fetchByProvider } from '@/lib/api';
 import { ChevronLeft, ChevronRight, Film, Tv } from 'lucide-react';
 import Link from 'next/link';
 import MovieCard from '../Shared/MovieCard';
+import styles from '@/app/page.module.css';
 
 // Provider Data with Brand Colors
 const PROVIDERS = [
@@ -100,8 +101,8 @@ export default function ProviderHub() {
                     >
                         <div
                             className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center border-2 overflow-hidden bg-[#1a1a1a] transition-all duration-300 ${activeProvider === p.id
-                                    ? 'shadow-[0_0_20px_rgba(0,0,0,0.5)] scale-105'
-                                    : 'border-[#333] grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100'
+                                ? 'shadow-[0_0_20px_rgba(0,0,0,0.5)] scale-105'
+                                : 'border-[#333] grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100'
                                 }`}
                             style={{
                                 borderColor: activeProvider === p.id ? p.borderColor : '#333',
@@ -148,7 +149,7 @@ export default function ProviderHub() {
             </div>
 
             {/* Content Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 relative z-10 min-h-[300px]">
+            <div className={styles.grid}>
                 {loading ? (
                     // Skeleton Loading
                     [...Array(10)].map((_, i) => (
