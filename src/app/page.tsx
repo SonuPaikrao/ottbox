@@ -102,7 +102,9 @@ export default async function Home(props: { searchParams: Promise<{ genre?: stri
       {(!genre && !type) && (
         <>
           <HeroSection movies={featuredMovies} />
-          <ProviderHub />
+          <section style={{ position: 'relative', zIndex: 10, marginTop: '-50px' }}>
+            <ProviderHub />
+          </section>
         </>
       )}
 
