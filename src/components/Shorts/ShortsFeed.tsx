@@ -334,18 +334,42 @@ export default function ShortsFeed() {
                         display: flex;
                         flex-direction: column;
                         align-items: center;
-                        background: #0a0a0a;
+                        background: #000; /* Ensure black background */
+                        height: 100vh;
+                        overflow-y: scroll;
+                        scroll-snap-type: y mandatory;
                     }
 
                     .short-slide {
                         width: 450px; /* Mobile width on Desktop */
-                        border-left: 1px solid #333;
-                        border-right: 1px solid #333;
-                        box-shadow: 0 0 50px rgba(0,0,0,0.5);
+                        min-width: 450px;
+                        height: 100vh; /* Force full viewport height per slide */
+                        min-height: 100vh;
+                        border-left: 1px solid #222;
+                        border-right: 1px solid #222;
+                        box-shadow: 0 0 50px rgba(0,0,0,0.8);
+                        flex-shrink: 0; /* Prevent shrinking */
+                        scroll-snap-align: start;
+                        scroll-snap-stop: always; /* Force stop on each slide */
+                        position: relative;
+                        overflow: hidden;
                     }
-
+                    
+                    /* Reset video iframe positioning for the desktop container */
+                    .video-iframe {
+                        width: 100%;
+                        height: 100%;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%) scale(1.5); /* Increase scale to fill 450px width vertically */
+                    }
+                    
                     .content-overlay {
-                        padding-bottom: 40px; /* Less padding on desktop */
+                        padding-bottom: 40px; 
+                        max-width: 450px; /* Constrain overlay width */
+                        left: 50%;
+                        transform: translateX(-50%);
                     }
                 }
             `}</style>
