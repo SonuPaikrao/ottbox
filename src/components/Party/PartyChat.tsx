@@ -18,13 +18,16 @@ interface PartyChatProps {
 export default function PartyChat({ roomId, username = 'Guest' }: PartyChatProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputText, setInputText] = useState('');
+    const [users, setUsers] = useState<string[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [showUsers, setShowUsers] = useState(false);
 
     useEffect(() => {
-        // Join the chat channel
+        // 1. Channel setup for Chat (Broadcast) AND Presence
         const channel = supabase.channel(`room:${roomId}`, {
             config: {
-                broadcast: { self: true }, // receive own messages? actually simpler to just push locally and broadcast to others
+                broadcast: { self: true },
+                presence: { key: username },
             },
         });
 
@@ -32,12 +35,22 @@ export default function PartyChat({ roomId, username = 'Guest' }: PartyChatProps
             .on('broadcast', { event: 'CHAT' }, (payload) => {
                 setMessages((prev) => [...prev, payload.payload as Message]);
             })
-            .subscribe();
+            .on('presence', { event: 'sync' }, () => {
+                const newState = channel.presenceState();
+                const userList = Object.values(newState).flat().map((u: any) => u.key || 'Anonymous');
+                // Simple dedupe if needed, but presence keys should be unique if we set them so.
+                setUsers([...new Set(userList)] as string[]);
+            })
+            .subscribe(async (status) => {
+                if (status === 'SUBSCRIBED') {
+                    await channel.track({ online_at: new Date().toISOString(), user: username });
+                }
+            });
 
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [roomId]);
+    }, [roomId, username]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -53,11 +66,6 @@ export default function PartyChat({ roomId, username = 'Guest' }: PartyChatProps
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
 
-        // Broadcast to others (and self if configured, but better to optimistic update)
-        // Wait, if self: true is on, we receive it too. Let's use that for simplicity.
-        // Actually, local update feels faster. Let's do local update + broadcast to others.
-        // If self: true is set, we might duplicate. Let's turn self: false (default).
-
         // Broadcast
         await supabase.channel(`room:${roomId}`).send({
             type: 'broadcast',
@@ -65,52 +73,78 @@ export default function PartyChat({ roomId, username = 'Guest' }: PartyChatProps
             payload: newMessage,
         });
 
-        // Local update
-        setMessages((prev) => [...prev, newMessage]);
+        // We rely on "self: true" so we don't need local update double.
         setInputText('');
     };
 
     return (
-        <div className="flex flex-col h-full bg-[#111] border-l border-[#333]">
-            <div className="p-4 border-b border-[#333]">
-                <h3 className="font-bold text-white flex items-center gap-2">
-                    <User size={18} /> Party Chat
+        <div className="flex flex-col h-full bg-[#0f0f0f] border-l border-[#222]">
+            {/* Header */}
+            <div className="p-3 border-b border-[#222] flex justify-between items-center bg-[#1a1a1a]">
+                <h3 className="font-bold text-gray-200 flex items-center gap-2 text-sm">
+                    Live Chat
                 </h3>
+                <button
+                    onClick={() => setShowUsers(!showUsers)}
+                    className="text-xs bg-[#333] px-2 py-1 rounded text-gray-300 flex items-center gap-1 hover:bg-[#444]"
+                >
+                    <User size={12} /> {users.length} Watching
+                </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {/* Users List Overlay */}
+            {showUsers && (
+                <div className="bg-[#1a1a1a] p-2 border-b border-[#222] max-h-32 overflow-y-auto">
+                    <p className="text-xs text-gray-500 mb-2 font-bold">IN THIS ROOM:</p>
+                    {users.map((u, i) => (
+                        <div key={i} className="text-xs text-gray-300 flex items-center gap-2 py-1">
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div> {u}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
                 {messages.length === 0 && (
-                    <p className="text-gray-500 text-center text-sm mt-4">No messages yet. Start the conversation!</p>
+                    <div className="h-full flex flex-col items-center justify-center text-gray-600 space-y-2">
+                        <span className="text-2xl">👋</span>
+                        <p className="text-xs">Say hello!</p>
+                    </div>
                 )}
                 {messages.map((msg, idx) => (
-                    <div key={idx} className={`flex flex-col ${msg.user === username ? 'items-end' : 'items-start'}`}>
-                        <div className={`max-w-[85%] rounded-lg p-2 px-3 text-sm ${msg.user === username
-                                ? 'bg-red-600 text-white rounded-br-none'
-                                : 'bg-[#333] text-gray-200 rounded-bl-none'
-                            }`}>
-                            {msg.user !== username && <span className="text-[10px] text-gray-400 block mb-1">{msg.user}</span>}
-                            {msg.text}
+                    <div key={idx} className="flex flex-col items-start animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="flex items-baseline gap-2">
+                            <span className={`text-xs font-bold ${msg.user === username ? 'text-red-500' : 'text-gray-400'}`}>
+                                {msg.user}
+                            </span>
+                            <span className="text-[10px] text-gray-600">{msg.timestamp}</span>
                         </div>
-                        <span className="text-[10px] text-gray-600 mt-1">{msg.timestamp}</span>
+                        <p className="text-sm text-gray-200 mt-0.5 break-words leading-tight">
+                            {msg.text}
+                        </p>
                     </div>
                 ))}
                 <div ref={messagesEndRef} />
             </div>
 
-            <form onSubmit={sendMessage} className="p-3 border-t border-[#333] flex gap-2">
-                <input
-                    type="text"
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Type a message..."
-                    className="flex-1 bg-[#222] text-white text-sm rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
-                />
-                <button
-                    type="submit"
-                    className="bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition"
-                >
-                    <Send size={18} />
-                </button>
+            {/* Input Area */}
+            <form onSubmit={sendMessage} className="p-3 border-t border-[#222] bg-[#1a1a1a]">
+                <div className="relative">
+                    <input
+                        type="text"
+                        value={inputText}
+                        onChange={(e) => setInputText(e.target.value)}
+                        placeholder="Chat..."
+                        className="w-full bg-[#0a0a0a] text-gray-200 text-sm rounded-lg pl-3 pr-10 py-2.5 focus:outline-none focus:ring-1 focus:ring-red-900 border border-[#333]"
+                    />
+                    <button
+                        type="submit"
+                        className="absolute right-1.5 top-1.5 p-1.5 bg-transparent text-gray-400 hover:text-white transition"
+                    >
+                        <Send size={16} />
+                    </button>
+                </div>
             </form>
         </div>
     );
