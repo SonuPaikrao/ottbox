@@ -98,12 +98,17 @@ export default async function Home(props: { searchParams: Promise<{ genre?: stri
 
   return (
     <div className={styles.main}>
-      {/* Show Hero only if no specific genre filter is active (or maybe show it always? User might like it. Let's hide on specific granular filters to focus on grid) */}
+      {/* Show Hero only if no specific genre filter is active */}
       {(!genre && !type) && <HeroSection movies={featuredMovies} />}
+
+      {/* Mood Selector - Below Hero */}
+      <div style={{ position: 'relative', zIndex: 15, marginTop: (!genre && !type) ? '-60px' : '20px' }}>
+        <MoodSelector />
+      </div>
 
       {/* Top10 and Continue Watching - Only on Home (Unfiltered) */}
       {!genre && !type && (
-        <section className="container" style={{ marginTop: '40px', position: 'relative', zIndex: 20 }}>
+        <section className="container" style={{ marginTop: '20px', position: 'relative', zIndex: 20 }}>
           <Top10Row movies={top10Today} />
           <ContinueWatchingRow />
         </section>
@@ -127,26 +132,37 @@ export default async function Home(props: { searchParams: Promise<{ genre?: stri
         </section>
       ) : (
         <>
-          <div className={styles.grid}>
-            {series.slice(0, 10).map((show) => (
-              <MovieCard key={show.id} movie={show} />
-            ))}
-          </div>
-        </section>
+          {/* Trending and Series Rows for Switcher Default View */}
+          <section className="container" style={{ marginTop: '20px' }}>
+            <h2 className={styles.sectionTitle}>Trending Now</h2>
+            <div className={styles.grid}>
+              {trending.slice(0, 12).map((movie) => (
+                <MovieCard key={movie.id} movie={movie} />
+              ))}
+            </div>
+          </section>
 
-      <section className="container" style={{ marginTop: '50px' }}>
-        <h2 className={styles.sectionTitle}>Top Rated</h2>
-        <div className={styles.grid}>
-          {topRated.slice(0, 12).map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
-        </div>
-      </section>
+          <section className="container" style={{ marginTop: '50px' }}>
+            <h2 className={styles.sectionTitle}>Series on Netflix</h2>
+            <div className={styles.grid}>
+              {series.slice(0, 10).map((show) => (
+                <MovieCard key={show.id} movie={show} />
+              ))}
+            </div>
+          </section>
 
-      <HomeInfiniteRows />
-    </>
-  )
-}
-    </div >
+          <section className="container" style={{ marginTop: '50px' }}>
+            <h2 className={styles.sectionTitle}>Top Rated</h2>
+            <div className={styles.grid}>
+              {topRated.slice(0, 12).map((movie) => (
+                <MovieCard key={movie.id} movie={movie} />
+              ))}
+            </div>
+          </section>
+
+          <HomeInfiniteRows />
+        </>
+      )}
+    </div>
   );
 }
