@@ -90,14 +90,15 @@ export default function ShortsFeed() {
                         {/* Video Background */}
                         <div className="video-wrapper">
                             {isActive && videoKey ? (
-                                <div className="video-inner" style={{ pointerEvents: 'none' }}> {/* Block iframe interaction to allow touch events on parent */}
+                                <div className="video-inner">
                                     <iframe
                                         src={`https://www.youtube.com/embed/${videoKey}?autoplay=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&loop=1&playlist=${videoKey}&mute=${muted ? 1 : 0}&start=5&enablejsapi=1`}
                                         allow="autoplay; encrypted-media"
                                         title={movie.title}
                                         className="video-iframe"
-                                        style={{ pointerEvents: 'none' }} // Crucial for touch events to bubble to container
                                     />
+                                    {/* Transparent overlay to prevent interaction but allow visual fullness */}
+                                    <div className="click-shield" />
                                 </div>
                             ) : (
                                 <div
@@ -181,14 +182,40 @@ export default function ShortsFeed() {
                     position: absolute;
                     inset: 0;
                     z-index: 0;
+                    background: black;
+                    overflow: hidden;
+                }
+
+                .video-inner {
+                    width: 100%;
+                    height: 100%;
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
 
                 .video-iframe {
-                    width: 100%;
-                    height: 100%;
-                    transform: scale(1.35); /* Zoom to fill/crop slightly like TikTok */
-                    pointer-events: none; /* Prevent interaction with YT controls */
+                    /* Force video to cover screen by scaling aggressively */
+                    /* 16:9 video in 9:16 screen needs ~3.16x scale to cover height fully, 
+                       or ~1.77x to cover width. 
+                       We want to cover HEIGHT mostly for mobile feeling. */
+                    width: 100vw;
+                    height: 56.25vw; /* 16:9 aspect ratio based on width */
+                    min-height: 100vh;
+                    min-width: 177.77vh; /* 16:9 aspect ratio based on height */
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(1.3); /* Scale up to zoom in and fill */
+                    pointer-events: none;
                     border: none;
+                }
+
+                .click-shield {
+                    position: absolute;
+                    inset: 0;
+                    z-index: 1; /* Above iframe */
                 }
 
                 .poster-bg {
@@ -202,8 +229,9 @@ export default function ShortsFeed() {
                 .gradient-overlay {
                     position: absolute;
                     inset: 0;
-                    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.4) 100%);
+                    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.4) 100%);
                     pointer-events: none;
+                    z-index: 2;
                 }
 
                 .content-overlay {
@@ -211,11 +239,12 @@ export default function ShortsFeed() {
                     bottom: 0;
                     left: 0;
                     width: 100%;
-                    padding: 20px 20px 80px 20px; /* Extra bottom padding for mobile nav */
+                    padding: 20px 20px 80px 20px;
                     z-index: 10;
                     display: flex;
                     align-items: flex-end;
                     justify-content: space-between;
+                    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
                 }
 
                 .info-section {
