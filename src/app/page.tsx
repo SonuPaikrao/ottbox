@@ -1,6 +1,8 @@
 import { fetchTrending, fetchTopRated, fetchTrendingSeries, fetchTrendingDay, discoverMoviesByGenre, fetchMovieDetails, Movie } from "@/lib/api";
 import dynamic from 'next/dynamic';
 import HeroSection from "@/components/Home/HeroSection";
+import Row from '@/components/Home/Row';
+import MoodSelector from '@/components/Home/MoodSelector';
 import Top10Row from "@/components/Home/Top10Row";
 import MovieCard from "@/components/Shared/MovieCard";
 import GenrePills from "@/components/Home/GenrePills";
@@ -125,37 +127,26 @@ export default async function Home(props: { searchParams: Promise<{ genre?: stri
         </section>
       ) : (
         <>
-          {/* Trending and other rows - Below Pills */}
-          <section className="container" style={{ marginTop: '0', position: 'relative', zIndex: 20 }}>
-            <h2 className={styles.sectionTitle}>Trending Now</h2>
-            <div className={styles.grid}>
-              {trending.slice(5, 17).map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
-              ))}
-            </div>
-          </section>
+          <div className={styles.grid}>
+            {series.slice(0, 10).map((show) => (
+              <MovieCard key={show.id} movie={show} />
+            ))}
+          </div>
+        </section>
 
-          <section className="container" style={{ marginTop: '50px' }}>
-            <h2 className={styles.sectionTitle}>Series on Netflix</h2>
-            <div className={styles.grid}>
-              {series.slice(0, 10).map((show) => (
-                <MovieCard key={show.id} movie={show} />
-              ))}
-            </div>
-          </section>
+      <section className="container" style={{ marginTop: '50px' }}>
+        <h2 className={styles.sectionTitle}>Top Rated</h2>
+        <div className={styles.grid}>
+          {topRated.slice(0, 12).map((movie) => (
+            <MovieCard key={movie.id} movie={movie} />
+          ))}
+        </div>
+      </section>
 
-          <section className="container" style={{ marginTop: '50px' }}>
-            <h2 className={styles.sectionTitle}>Top Rated</h2>
-            <div className={styles.grid}>
-              {topRated.slice(0, 12).map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
-              ))}
-            </div>
-          </section>
-
-          <HomeInfiniteRows />
-        </>
-      )}
-    </div>
+      <HomeInfiniteRows />
+    </>
+  )
+}
+    </div >
   );
 }
