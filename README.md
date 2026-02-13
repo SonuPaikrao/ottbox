@@ -141,7 +141,15 @@ To enable Google Sign-In:
    - **Name**: "OttBox Web" or similar.
 4. Add **Authorized redirect URIs** in Google Cloud: 
    - `https://wkfynjofytyfpvimlfno.supabase.co/auth/v1/callback`
-5. Copy **Client ID** and **Secret** to Supabase.
+### **Production & Vercel Setup**
+When deploying to Vercel:
+1. Go to **Supabase Dashboard > Authentication > URL Configuration**.
+2. **Site URL**: Set this to your production URL (e.g., `https://ott-box-weld.vercel.app`).
+3. **Redirect URLs**: Add the following:
+   - `https://ott-box-weld.vercel.app/**`
+   - `http://localhost:3000/**`
+   
+**Note**: You do NOT need to change anything in Google Cloud Console if you are using the Supabase Callback URL correctly. Just ensure Supabase allows your Vercel domain.
 
 
 ```
