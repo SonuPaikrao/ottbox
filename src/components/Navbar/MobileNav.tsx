@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Search, List, User, LogOut } from 'lucide-react'; // Added LogOut
+import { Home, Search, List, User, LogOut, Film } from 'lucide-react'; // Added LogOut, Film
 import styles from './MobileNav.module.css';
 import { useAuth } from '@/context/AuthContext';
 import LoginModal from '@/components/Shared/LoginModal';
@@ -36,6 +36,11 @@ export default function MobileNav() {
 
                 <Link href="/search" className={`${styles.navItem} ${isActive('/search') ? styles.active : ''}`}>
                     <Search size={24} strokeWidth={2.5} />
+                </Link>
+
+                <Link href="/shorts" className={`${styles.navItem} ${isActive('/shorts') ? styles.active : ''}`}>
+                    {/* Using a custom Play icon or similar for Shorts */}
+                    <Film size={24} strokeWidth={2.5} />
                 </Link>
 
                 <div

@@ -95,6 +95,9 @@ export default function Navbar() {
                 {/* Desktop Nav */}
                 <div className={styles.desktopNav}>
                     {/* Links removed as per user request to centralize navigation on Home */}
+                    <Link href="/shorts" style={{ color: '#ccc', fontWeight: 600, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        Shorts
+                    </Link>
                 </div>
 
                 {/* Actions */}
