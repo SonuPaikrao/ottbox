@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import Link from 'next/link';
+import { Play, Film, X } from 'lucide-react';
 import WatchlistButton from '@/components/Shared/WatchlistButton';
 import { Movie, fetchMovieVideos } from '@/lib/api';
 import styles from './TitleActions.module.css';
