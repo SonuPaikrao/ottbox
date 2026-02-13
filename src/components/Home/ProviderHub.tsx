@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Movie, fetchByProvider } from '@/lib/api';
-import { ChevronLeft, ChevronRight, Film, Tv, Play } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Film, Tv } from 'lucide-react';
 import Link from 'next/link';
+import MovieCard from '../Shared/MovieCard';
 
 // Provider Data with Brand Colors
 const PROVIDERS = [
@@ -155,37 +156,7 @@ export default function ProviderHub() {
                     ))
                 ) : (
                     movies.map((movie) => (
-                        <Link
-                            key={movie.id}
-                            href={`/${mediaType === 'movie' ? 'watch' : 'series'}/${movie.id}`}
-                            className="group relative block aspect-[2/3] bg-[#111] rounded-xl overflow-hidden transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-black/50 hover:z-20"
-                        >
-                            <Image
-                                src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/placeholder.png'}
-                                alt={movie.title || movie.name || 'Untitled'}
-                                fill
-                                className="object-cover transition-opacity duration-300 group-hover:opacity-80"
-                                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
-                            />
-
-                            {/* Hover Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                                <h4 className="text-white font-bold text-sm line-clamp-2 leading-tight">
-                                    {movie.title || movie.name}
-                                </h4>
-                                <div className="flex items-center gap-2 mt-2">
-                                    <span className="text-[10px] bg-white/20 backdrop-blur-md px-2 py-0.5 rounded text-white">
-                                        {(movie.vote_average || 0).toFixed(1)} ★
-                                    </span>
-                                    <span className="text-[10px] text-gray-300">
-                                        {new Date(movie.release_date || movie.first_air_date || '').getFullYear() || 'N/A'}
-                                    </span>
-                                </div>
-                                <button className="mt-3 w-full py-1.5 bg-white text-black text-xs font-bold rounded flex items-center justify-center gap-1 hover:bg-gray-200 transition-colors">
-                                    <Play size={10} fill="currentColor" /> Watch
-                                </button>
-                            </div>
-                        </Link>
+                        <MovieCard key={movie.id} movie={movie} />
                     ))
                 )}
             </div>
