@@ -276,3 +276,14 @@ export const fetchCredits = async (id: string, type: 'movie' | 'tv' = 'movie'): 
         return [];
     }
 };
+export const fetchByProvider = async (providerId: number, type: 'movie' | 'tv' = 'movie'): Promise<Movie[]> => {
+    try {
+        const url = `${BASE_URL}/discover/${type}?api_key=${API_KEY}&with_watch_providers=${providerId}&watch_region=IN&sort_by=popularity.desc&include_adult=false&vote_count.gte=50&page=1`;
+        const res = await fetch(url, { next: { revalidate: 3600 } });
+        const data = await res.json();
+        return (data.results || []).map((item: any) => ({ ...item, media_type: type }));
+    } catch (error) {
+        console.error("Failed to fetch provider content:", error);
+        return [];
+    }
+};
