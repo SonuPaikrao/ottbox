@@ -11,7 +11,9 @@ export default function ShortsFeed() {
     const [videoKeys, setVideoKeys] = useState<{ [key: number]: string | null }>({});
     const [muted, setMuted] = useState(true);
     const [activeIndex, setActiveIndex] = useState(0);
+    const [isPlaying, setIsPlaying] = useState(true);
     const containerRef = useRef<HTMLDivElement>(null);
+    const pressTimer = useRef<NodeJS.Timeout | null>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -31,6 +33,7 @@ export default function ShortsFeed() {
                     if (entry.isIntersecting) {
                         const index = Number(entry.target.getAttribute('data-index'));
                         setActiveIndex(index);
+                        setIsPlaying(true); // Auto-play when scrolling to new slide
 
                         // Fetch video key if not already loaded
                         const movieId = Number(entry.target.getAttribute('data-id'));
@@ -64,16 +67,29 @@ export default function ShortsFeed() {
         }
     };
 
+    // Long Press Handlers
+    const handleTouchStart = () => {
+        pressTimer.current = setTimeout(() => {
+            setIsPlaying(false); // Pause on long hold
+        }, 200); // 200ms threshold
+    };
+
+    const handleTouchEnd = () => {
+        if (pressTimer.current) clearTimeout(pressTimer.current);
+        setIsPlaying(true); // Resume on release
+    };
+
     return (
         <div className="shorts-container" ref={containerRef}>
-            {/* Desktop Back Button Overlay */}
-            <div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 50 }}>
+            {/* Desktop Back Button Overlay - Managed locally, ensuring no Navbar overlap */}
+            <div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 100 }}>
                 <BackButton />
             </div>
 
             {movies.map((movie, index) => {
                 const isActive = index === activeIndex;
                 const videoKey = videoKeys[movie.id];
+                const shouldPlay = isActive && isPlaying;
 
                 return (
                     <div
@@ -81,16 +97,23 @@ export default function ShortsFeed() {
                         className="short-slide"
                         data-index={index}
                         data-id={movie.id}
+                        onTouchStart={handleTouchStart}
+                        onTouchEnd={handleTouchEnd}
+                        onMouseDown={handleTouchStart} // For Desktop testing
+                        onMouseUp={handleTouchEnd}
                     >
                         {/* Video Background */}
                         <div className="video-wrapper">
                             {isActive && videoKey ? (
-                                <iframe
-                                    src={`https://www.youtube.com/embed/${videoKey}?autoplay=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&loop=1&playlist=${videoKey}&mute=${muted ? 1 : 0}&start=5`}
-                                    allow="autoplay; encrypted-media"
-                                    title={movie.title}
-                                    className="video-iframe"
-                                />
+                                <div className="video-inner" style={{ pointerEvents: 'none' }}> {/* Block iframe interaction to allow touch events on parent */}
+                                    <iframe
+                                        src={`https://www.youtube.com/embed/${videoKey}?autoplay=${shouldPlay ? 1 : 0}&controls=0&modestbranding=1&rel=0&iv_load_policy=3&loop=1&playlist=${videoKey}&mute=${muted ? 1 : 0}&start=5&enablejsapi=1`}
+                                        allow="autoplay; encrypted-media"
+                                        title={movie.title}
+                                        className="video-iframe"
+                                        style={{ pointerEvents: 'none' }} // Crucial for touch events to bubble to container
+                                    />
+                                </div>
                             ) : (
                                 <div
                                     className="poster-bg"
