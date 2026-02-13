@@ -68,14 +68,14 @@ export default function ProviderFilter() {
             </div>
 
             {/* Provider Logos */}
-            <div className="flex overflow-x-auto pb-4 gap-4 hide-scrollbar mb-6">
+            <div className="flex flex-row flex-nowrap overflow-x-auto gap-3 pb-4 hide-scrollbar snap-x snap-mandatory">
                 {providers.map((provider) => (
                     <button
                         key={provider.id}
                         onClick={() => setActiveProvider(provider.id)}
-                        className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden transition-all duration-300 ${activeProvider === provider.id
-                                ? 'ring-2 ring-white scale-110 shadow-lg shadow-primary/20'
-                                : 'opacity-60 hover:opacity-100 hover:scale-105'
+                        className={`relative flex-shrink-0 w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden transition-all duration-300 ${activeProvider === provider.id
+                            ? 'ring-2 ring-white scale-105 shadow-lg shadow-primary/20'
+                            : 'opacity-60 hover:opacity-100 hover:scale-105'
                             }`}
                     >
                         <Image
@@ -83,42 +83,40 @@ export default function ProviderFilter() {
                             alt={provider.name}
                             fill
                             className="object-cover"
-                            sizes="80px"
+                            sizes="64px"
                         />
-                        {/* Fallback for Jio if image fails (handled by Image onError? Next Image is tough with onError. 
-                            If strict, we assume paths are correct. 
-                            JioCinema path is a guess. If it breaks, it shows alt. 
-                         */}
                     </button>
                 ))}
             </div>
+        </div>
 
-            {/* Content Slider */}
-            <div className="relative min-h-[300px]">
-                {isLoading ? (
-                    <div className="flex gap-4 overflow-hidden">
-                        {[1, 2, 3, 4, 5, 6].map((i) => (
-                            <div key={i} className="flex-shrink-0 w-[160px] md:w-[200px] h-[300px] bg-zinc-800 animate-pulse rounded-lg" />
-                        ))}
-                    </div>
-                ) : (
-                    <>
-                        <h3 className="text-lg font-semibold text-white mb-4">
-                            {providers.find(p => p.id === activeProvider)?.name} {mediaType === 'movie' ? 'Movies' : 'Series'}
-                        </h3>
-                        <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar snap-x snap-mandatory">
-                            {content.map((item) => (
-                                <div key={item.id} className="flex-shrink-0 w-[160px] md:w-[200px] snap-start">
-                                    <MovieCard movie={item} />
-                                </div>
-                            ))}
-                            {content.length === 0 && (
-                                <div className="text-gray-400 py-10">No content found for this provider.</div>
-                            )}
-                        </div>
-                    </>
-                )}
+            {/* Content Slider */ }
+    <div className="relative min-h-[250px]">
+        {isLoading ? (
+            <div className="flex flex-row flex-nowrap gap-3 overflow-hidden">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="flex-shrink-0 w-[130px] md:w-[170px] h-[220px] md:h-[280px] bg-zinc-800 animate-pulse rounded-lg" />
+                ))}
             </div>
-        </section>
+        ) : (
+            <>
+                <h3 className="text-lg font-semibold text-white mb-3 px-1">
+                    {providers.find(p => p.id === activeProvider)?.name} {mediaType === 'movie' ? 'Movies' : 'Series'}
+                </h3>
+                {/* Force horizontal scroll with flex-nowrap */}
+                <div className="flex flex-row flex-nowrap overflow-x-auto gap-3 pb-4 hide-scrollbar snap-x snap-mandatory">
+                    {content.map((item) => (
+                        <div key={item.id} className="flex-shrink-0 w-[130px] md:w-[170px] snap-start">
+                            <MovieCard movie={item} />
+                        </div>
+                    ))}
+                    {content.length === 0 && (
+                        <div className="text-gray-400 py-10 w-full text-center">No content found for this provider.</div>
+                    )}
+                </div>
+            </>
+        )}
+    </div>
+        </section >
     );
 }
