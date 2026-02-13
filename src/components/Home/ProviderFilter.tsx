@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { fetchByProvider, Movie } from '@/lib/api';
 import MovieCard from '../Shared/MovieCard';
-import { Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react'; // Kept for future use or can remove. 
+// Actually let's just clean it up to force file update.
+import { Film } from 'lucide-react';
 
 // TMDB Logo Paths
 const providers = [
@@ -38,7 +40,7 @@ export default function ProviderFilter() {
     }, [activeProvider, mediaType]);
 
     return (
-        <section className="container mt-8 mb-12">
+        <section className="container w-full mt-8 mb-12 flex flex-col gap-6">
             {/* Header */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
                 <div>
