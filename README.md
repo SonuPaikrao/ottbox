@@ -22,8 +22,15 @@
 
 **OTT Box** is a premium streaming platform that brings the cinema experience to your screen. Built with cutting-edge Next.js 16 and powered by TMDB API, it delivers a rich, immersive viewing experience with auto-playing trailers, dynamic content discovery, and a sleek Netflix-inspired interface.
 
-### 🎯 **Key Features**
+### 🔥 **Hot New Features**
 
+- 🎬 **Shorts/Reels Feed** - TikTok-style vertical video feed for immersive trailer discovery.
+- 🛡️ **Smart Watchlist** - Protected watchlist with authentication and easy management.
+- 📱 **PWA Support** - Installable as a native app on all devices.
+- 👆 **Touch Interactions** - Swipe, scroll, and long-press gestures optimization.
+
+### 🎯 **Key Features**
+ 
 - 🎥 **Auto-Playing Trailers** - Cinematic hero section with YouTube video backgrounds
 - 📱 **Fully Responsive** - Seamless experience across all devices
 - 🎭 **Premium UI/UX** - Netflix-style design with glassmorphism effects
