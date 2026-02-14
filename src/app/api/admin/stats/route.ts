@@ -32,6 +32,8 @@ export async function GET(req: NextRequest) {
         }
 
         // 2. Fetch Stats
+        console.log('Admin Stats API: Fetching data...');
+
         // Total Users: Query 'auth.users' table directly using Service Role
         // We use .schema('auth') to access the protected schema
         const { count: userCount, error: userError } = await supabaseAdmin
@@ -41,6 +43,8 @@ export async function GET(req: NextRequest) {
 
         if (userError) {
             console.error('Stats Error (Users):', userError);
+        } else {
+            console.log('Stats Check: User Count =', userCount);
         }
 
         // Watchlist Count: Query the table directly
@@ -50,6 +54,8 @@ export async function GET(req: NextRequest) {
 
         if (countError) {
             console.error('Stats Error (Watchlist):', countError);
+        } else {
+            console.log('Stats Check: Watchlist Count =', watchlistCount);
         }
 
         return NextResponse.json({
@@ -59,6 +65,7 @@ export async function GET(req: NextRequest) {
         });
 
     } catch (error: any) {
+        console.error('Stats API Critical Error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
