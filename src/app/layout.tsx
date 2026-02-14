@@ -55,6 +55,7 @@ export const viewport = {
 import InstallPrompt from "@/components/Shared/InstallPrompt";
 import SplashScreen from "@/components/Shared/SplashScreen";
 import AppShell from "@/components/Shared/AppShell";
+import NotificationPopup from "@/components/NotificationPopup";
 
 import AnalyticsTracker from "@/components/Analytics/AnalyticsTracker";
 
@@ -75,6 +76,7 @@ export default function RootLayout({
                   <AppShell>
                     {children}
                   </AppShell>
+                  <NotificationPopup />
                   <InstallPrompt />
                   <SplashScreen />
                 </HistoryProvider>
