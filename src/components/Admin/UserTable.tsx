@@ -59,9 +59,12 @@ export default function UserTable() {
     const columns = useMemo<ColumnDef<any>[]>(
         () => [
             {
-                accessorKey: 'date',
+                accessorKey: 'created_at',
                 header: 'Joined Date',
-                cell: info => new Date(info.getValue() as string).toLocaleDateString(),
+                cell: info => {
+                    const value = info.getValue() as string;
+                    return value ? new Date(value).toLocaleDateString() : 'N/A';
+                },
             },
             {
                 accessorKey: 'email',

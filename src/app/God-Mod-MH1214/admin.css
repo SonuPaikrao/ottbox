@@ -39,17 +39,27 @@
    GLOBAL STYLES
    ============================================ */
 
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
 .admin-layout {
     display: flex;
     min-height: 100vh;
     background: var(--bg-primary);
     color: var(--text-primary);
+    overflow-x: hidden;
 }
 
 .admin-main {
     flex: 1;
     margin-left: 0;
     transition: margin-left var(--transition-base);
+    min-height: 100vh;
+    overflow-y: auto;
 }
 
 @media (min-width: 1024px) {
