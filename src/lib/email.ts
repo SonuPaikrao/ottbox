@@ -1,37 +1,35 @@
 
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import { getWelcomeEmailHtml } from './email-templates';
 
-const resendApiKey = process.env.RESEND_API_KEY;
-
-if (!resendApiKey) {
-  console.warn('Missing RESEND_API_KEY. Email operations will fail.');
-}
-
-const resend = resendApiKey ? new Resend(resendApiKey) : null;
+// Create a transporter using Gmail SMTP
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER, // Your Gmail address
+    pass: process.env.GMAIL_APP_PASSWORD, // Your Gmail App Password
+  },
+});
 
 export const sendWelcomeEmail = async (email: string, name: string, password?: string) => {
-  if (!resend) {
-    console.error('Resend client not initialized. Missing API Key.');
-    return { success: false, error: 'Missing API Key' };
+  // Check if credentials exist to avoid crashes
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    console.warn('Missing GMAIL_USER or GMAIL_APP_PASSWORD. Email will not be sent.');
+    return { success: false, error: 'Server configuration error: Missing Gmail credentials' };
   }
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: 'OTT Box <onboarding@resend.dev>', // Use resend's test domain for now
-      to: [email],
-      subject: 'Welcome to the Future of Streaming 🎬',
-      html: getWelcomeEmailHtml(name, password),
+    const info = await transporter.sendMail({
+      from: `"OTT Box" <${process.env.GMAIL_USER}>`, // Sender address
+      to: email, // Receiver address
+      subject: 'Welcome to the Future of Streaming 🎬', // Subject line
+      html: getWelcomeEmailHtml(name, password), // HTML body
     });
 
-    if (error) {
-      console.error('Email sending failed:', error);
-      return { success: false, error };
-    }
-
-    return { success: true, data };
+    console.log('Message sent: %s', info.messageId);
+    return { success: true, data: info };
   } catch (error) {
-    console.error('Email service error:', error);
+    console.error('Email sending failed:', error);
     return { success: false, error };
   }
 };
