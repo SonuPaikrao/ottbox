@@ -4,7 +4,7 @@ import './admin.css';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import AdminSidebar from '@/components/Admin/AdminSidebar';
 
 import { useRef } from 'react';
@@ -17,24 +17,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                get(name: string) {
-                    const value = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || '';
-                    return value;
-                },
-                set(name: string, value: string, options: any) {
-                    document.cookie = `${name}=${value}; path=/; max-age=${options.maxAge}; SameSite=Lax`;
-                },
-                remove(name: string, options: any) {
-                    document.cookie = `${name}=; path=/; max-age=0`;
-                }
-            }
-        }
-    );
+    const supabase = getSupabaseBrowserClient();
     const pathname = usePathname();
 
     useEffect(() => {

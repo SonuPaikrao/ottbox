@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createBrowserClient } from '@supabase/ssr';
+import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { Lock, Mail, Key } from 'lucide-react';
 
 export default function AdminLogin() {
@@ -12,24 +12,7 @@ export default function AdminLogin() {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
-    const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                get(name: string) {
-                    const value = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || '';
-                    return value;
-                },
-                set(name: string, value: string, options: any) {
-                    document.cookie = `${name}=${value}; path=/; max-age=${options.maxAge}; SameSite=Lax`;
-                },
-                remove(name: string, options: any) {
-                    document.cookie = `${name}=; path=/; max-age=0`;
-                }
-            }
-        }
-    );
+    const supabase = getSupabaseBrowserClient();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
