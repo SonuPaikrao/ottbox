@@ -1,15 +1,26 @@
 
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resendApiKey = process.env.RESEND_API_KEY;
+
+if (!resendApiKey) {
+  console.warn('Missing RESEND_API_KEY. Email operations will fail.');
+}
+
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 export const sendWelcomeEmail = async (email: string, name: string, password?: string) => {
-    try {
-        const { data, error } = await resend.emails.send({
-            from: 'OTT Box <onboarding@resend.dev>', // Use resend's test domain for now
-            to: [email],
-            subject: 'Welcome to OTT Box! 🎬',
-            html: `
+  if (!resend) {
+    console.error('Resend client not initialized. Missing API Key.');
+    return { success: false, error: 'Missing API Key' };
+  }
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'OTT Box <onboarding@resend.dev>', // Use resend's test domain for now
+      to: [email],
+      subject: 'Welcome to OTT Box! 🎬',
+      html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f9f9f9;">
           <div style="text-align: center; margin-bottom: 20px;">
             <h1 style="color: #e50914;">OTT Box</h1>
@@ -37,16 +48,16 @@ export const sendWelcomeEmail = async (email: string, name: string, password?: s
           </div>
         </div>
       `,
-        });
+    });
 
-        if (error) {
-            console.error('Email sending failed:', error);
-            return { success: false, error };
-        }
-
-        return { success: true, data };
-    } catch (error) {
-        console.error('Email service error:', error);
-        return { success: false, error };
+    if (error) {
+      console.error('Email sending failed:', error);
+      return { success: false, error };
     }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Email service error:', error);
+    return { success: false, error };
+  }
 };
