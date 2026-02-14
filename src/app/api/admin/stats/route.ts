@@ -26,6 +26,11 @@ export async function GET(req: NextRequest) {
         const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
         if (!user || user.email !== adminEmail) {
+            console.error('Admin Stats 403: Check Failed.');
+            console.log('--- DEBUG AUTH ---');
+            console.log('User:', user ? user.email : 'No User Session Found');
+            console.log('Expected Admin:', adminEmail || 'ENV VAR MISSING');
+            console.log('------------------');
             return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
         }
 
