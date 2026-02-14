@@ -1,5 +1,5 @@
 
-export const getWelcomeEmailHtml = (name: string, password?: string) => {
+export const getWelcomeEmailHtml = (name: string, password?: string, verificationLink?: string) => {
     return `
 <!DOCTYPE html>
 <html>
@@ -11,14 +11,14 @@ export const getWelcomeEmailHtml = (name: string, password?: string) => {
     body { margin: 0; padding: 0; background-color: #000000; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff; }
     .container { max-width: 600px; margin: 0 auto; background-color: #141414; overflow: hidden; }
     .header { padding: 40px 20px; text-align: center; background: linear-gradient(180deg, rgba(229,9,20,0.1) 0%, rgba(20,20,20,0) 100%); border-bottom: 1px solid #333; }
-    .logo { color: #e50914; font-size: 32px; font-weight: 800; letter-spacing: -1px; text-decoration: none; display: inline-block; }
+    .logo { color: #e50914; font-size: 32px; font-weight: 800; letter-spacing: -1px; text-decoration: none; display: inline-block; text-transform: uppercase; }
     .content { padding: 40px 30px; }
     .greeting { font-size: 24px; font-weight: 700; margin-bottom: 20px; color: #ffffff; }
     .text { font-size: 16px; line-height: 1.6; color: #cccccc; margin-bottom: 20px; }
     .credentials-box { background-color: #1f1f1f; border: 1px solid #333; border-radius: 8px; padding: 25px; margin: 30px 0; text-align: center; }
     .cred-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 10px; }
     .cred-value { font-size: 24px; font-family: monospace; font-weight: 700; color: #ffffff; letter-spacing: 2px; background: #000; padding: 10px 20px; border-radius: 4px; display: inline-block; border: 1px dashed #444; }
-    .cta-button { display: block; width: 100%; max-width: 250px; margin: 40px auto 0; background-color: #e50914; color: #ffffff; text-align: center; padding: 16px 0; border-radius: 4px; font-weight: 700; font-size: 16px; text-decoration: none; transition: background-color 0.3s; }
+    .cta-button { display: block; width: 100%; max-width: 280px; margin: 40px auto 0; background-color: #e50914; color: #ffffff; text-align: center; padding: 18px 0; border-radius: 4px; font-weight: 700; font-size: 16px; text-decoration: none; transition: background-color 0.3s; text-transform: uppercase; letter-spacing: 0.5px; }
     .footer { padding: 30px 20px; text-align: center; font-size: 12px; color: #666666; border-top: 1px solid #222; background-color: #0a0a0a; }
     .social-links { margin-bottom: 15px; }
     .social-link { color: #999; text-decoration: none; margin: 0 10px; }
@@ -38,19 +38,22 @@ export const getWelcomeEmailHtml = (name: string, password?: string) => {
 
     <!-- Main Content -->
     <div class="content">
-      <h1 class="greeting">Welcome, ${name}.</h1>
+      <h1 class="greeting">Welcome to the Club, ${name}.</h1>
       
       <p class="text">
-        Your journey into unlimited entertainment starts here. We've curated the best movies and series just for you.
+        ${verificationLink
+            ? "You're just one step away from unlimited entertainment. Please confirm your account below."
+            : "Your journey into unlimited entertainment starts here. We've curated the best movies and series just for you."
+        }
       </p>
 
       ${password ? `
         <!-- Credentials Section -->
         <div class="credentials-box">
-          <div class="cred-label">Your Secure Password</div>
+          <div class="cred-label">Your Account Credentials</div>
           <div class="cred-value">${password}</div>
           <p style="font-size: 12px; color: #666; margin-top: 15px; margin-bottom: 0;">
-            We automatically generated this secure password for you. <br>You can change it anytime in your account settings.
+             Keep this safe. You can use this to login to your OTT Box account.
           </p>
         </div>
       ` : ''}
@@ -60,7 +63,10 @@ export const getWelcomeEmailHtml = (name: string, password?: string) => {
       </p>
 
       <!-- CTA Button -->
-      <a href="${process.env.NEXT_PUBLIC_SITE_URL}" class="cta-button">Start Watching Now</a>
+      <!-- If verification link exists, use it. Otherwise go to site. -->
+      <a href="${verificationLink || process.env.NEXT_PUBLIC_SITE_URL}" class="cta-button">
+        ${verificationLink ? 'Confirm Account' : 'Start Watching Now'}
+      </a>
     </div>
 
     <!-- Footer -->

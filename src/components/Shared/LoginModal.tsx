@@ -46,28 +46,24 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 if (error) throw error;
                 onClose(); // Success
             } else {
-                const { data, error } = await signUpWithEmail(email, password);
-                if (error) throw error;
+            } else {
+                // Call our Custom API for Signup (To send Premium Email + Password)
+                const res = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    }),
+                });
 
-                // Trigger Welcome Email with Credentials
-                if (data?.user) {
-                    try {
-                        await fetch('/api/auth/welcome', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                userId: data.user.id,
-                                email: email,
-                                manualPassword: password, // Send the chosen password
-                                name: email.split('@')[0], // Fallback name
-                            }),
-                        });
-                    } catch (err) {
-                        console.error('Failed to send welcome email:', err);
-                    }
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || 'Signup failed');
                 }
 
-                setMessage('Account created! Check your email for your credentials.');
+                setMessage('Account created! Check your email for login details.');
             }
         } catch (err: any) {
             setError(err.message || 'Authentication failed');

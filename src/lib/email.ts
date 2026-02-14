@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendWelcomeEmail = async (email: string, name: string, password?: string) => {
+export const sendWelcomeEmail = async (email: string, name: string, password?: string, verificationLink?: string) => {
   // Check if credentials exist to avoid crashes
   if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
     console.warn('Missing GMAIL_USER or GMAIL_APP_PASSWORD. Email will not be sent.');
@@ -22,8 +22,8 @@ export const sendWelcomeEmail = async (email: string, name: string, password?: s
     const info = await transporter.sendMail({
       from: `"OTT Box" <${process.env.GMAIL_USER}>`, // Sender address
       to: email, // Receiver address
-      subject: 'Welcome to the Future of Streaming 🎬', // Subject line
-      html: getWelcomeEmailHtml(name, password), // HTML body
+      subject: verificationLink ? 'Confirm your OTT Box Account 🎬' : 'Welcome to the Future of Streaming 🎬', // Subject line
+      html: getWelcomeEmailHtml(name, password, verificationLink), // HTML body
     });
 
     console.log('Message sent: %s', info.messageId);
