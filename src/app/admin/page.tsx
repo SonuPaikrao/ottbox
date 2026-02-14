@@ -14,13 +14,23 @@ export default function AdminDashboard() {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await fetch('/api/admin/stats');
+                console.log('Dashboard: Fetching stats...');
+                // Add timestamp to prevent browser caching
+                const res = await fetch(`/api/admin/stats?t=${Date.now()}`, {
+                    cache: 'no-store'
+                });
+
+                console.log('Dashboard: API Status:', res.status);
+
                 if (res.ok) {
                     const data = await res.json();
+                    console.log('Dashboard: Stats Data Received:', data);
                     setStats(data);
+                } else {
+                    console.error('Dashboard: Fetch failed with status', res.status);
                 }
             } catch (error) {
-                console.error('Failed to fetch stats');
+                console.error('Failed to fetch stats:', error);
             } finally {
                 setLoading(false);
             }
