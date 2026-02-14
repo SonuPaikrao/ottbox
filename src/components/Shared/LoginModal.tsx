@@ -9,6 +9,8 @@ interface LoginModalProps {
     onClose: () => void;
 }
 
+import { createPortal } from 'react-dom';
+
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
     const [loading, setLoading] = useState(false);
@@ -24,11 +26,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden'; // Also lock html
         } else {
-            document.body.style.overflow = 'unset';
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
         return () => {
-            document.body.style.overflow = 'unset';
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         };
     }, [isOpen]);
 
@@ -84,20 +89,27 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         }
     };
 
-    return (
+    // Use React Portal to render outside of any parent transforms/filters
+    // This ensures position: fixed is relative to the viewport
+    return createPortal(
         <div style={{
-            position: 'fixed', inset: 0, zIndex: 2000,
+            position: 'fixed', inset: 0, zIndex: 9999, // Ensure high z-index
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(5px)'
+            background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)',
+            // Ensure overlay covers everything even on mobile with address bar changes
+            height: '100dvh', width: '100vw',
+            top: 0, left: 0
         }}>
             <div style={{
                 background: '#141414', border: '1px solid #333',
                 borderRadius: '12px', padding: '40px', width: '90%', maxWidth: '400px',
-                position: 'relative', textAlign: 'center'
+                position: 'relative', textAlign: 'center',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
             }}>
                 <button onClick={onClose} style={{
                     position: 'absolute', top: '15px', right: '15px',
-                    background: 'none', border: 'none', color: '#888', cursor: 'pointer'
+                    background: 'none', border: 'none', color: '#888', cursor: 'pointer',
+                    zIndex: 10
                 }}>
                     <X size={24} />
                 </button>
@@ -212,6 +224,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     </>
                 )}
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
