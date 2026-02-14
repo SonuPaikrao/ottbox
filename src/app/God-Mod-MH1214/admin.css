@@ -38,3 +38,115 @@
         padding-top: 80px;
     }
 }
+
+/* TanStack Table Styles */
+.user-table-container {
+    background: rgba(20, 20, 20, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #eee;
+}
+
+.user-table th {
+    text-align: left;
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #888;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+}
+
+.user-table th:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.user-table td {
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.95rem;
+}
+
+.user-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-active {
+    background: rgba(70, 211, 105, 0.1);
+    color: #46d369;
+    border: 1px solid rgba(70, 211, 105, 0.2);
+}
+
+.status-banned {
+    background: rgba(229, 9, 20, 0.1);
+    color: #e50914;
+    border: 1px solid rgba(229, 9, 20, 0.2);
+}
+
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.search-input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 8px;
+    width: 300px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.search-input:focus {
+    border-color: #e50914;
+    box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.2);
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    justify-content: flex-end;
+}
+
+.page-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+}

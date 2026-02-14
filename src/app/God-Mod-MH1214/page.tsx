@@ -5,6 +5,8 @@ import { Users, Film, Activity, Server, Zap, Globe } from 'lucide-react';
 import AnalyticsChart from '@/components/Admin/Charts/AreaChart';
 import DeviceChart from '@/components/Admin/Charts/PieChart';
 import MapChart from '@/components/Admin/Charts/MapChart';
+import ServerMetrics from '@/components/Admin/Charts/ServerMetrics';
+import NotificationCenter from '@/components/Admin/NotificationCenter';
 
 export default function GodModeDashboard() {
     const [stats, setStats] = useState({
@@ -136,6 +138,36 @@ export default function GodModeDashboard() {
                             No user growth data available yet.
                         </div>
                     )}
+                </div>
+
+                import NotificationCenter from '@/components/Admin/NotificationCenter';
+
+                // ... (inside component)
+
+                {/* Server Metrics - NEW REAL DATA FEATURE */}
+                <div style={{
+                    gridColumn: '1 / -1',
+                    background: 'rgba(20, 20, 20, 0.7)',
+                    backdropFilter: 'blur(10px)',
+                    padding: '25px',
+                    borderRadius: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.05)'
+                }}>
+                    {/* ... (ServerMetrics header) ... */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <Server size={20} color="#00d2d3" /> System Health Monitor
+                        </h3>
+                        <span style={{ fontSize: '0.8rem', color: '#00d2d3', border: '1px solid #00d2d3', padding: '4px 8px', borderRadius: '4px' }}>
+                            Live Polling (3s)
+                        </span>
+                    </div>
+                    <ServerMetrics />
+                </div>
+
+                {/* Notification Center */}
+                <div style={{ gridColumn: '1 / -1' }}>
+                    <NotificationCenter />
                 </div>
 
                 {/* Map Section */}
