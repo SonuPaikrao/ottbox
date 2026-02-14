@@ -27,13 +27,14 @@ export async function GET(req: NextRequest) {
         const limit = parseInt(url.searchParams.get('limit') || '10');
         const query = url.searchParams.get('query') || '';
 
-        // 3. Fetch Users via Admin API
-        // Supabase ListUsers doesn't support "Search" natively optimally, 
-        // but we can fetch and filter, or use a separate public.profiles table if it existed.
-        // For now, we fetch a batch and filter in memory (acceptable for < 10k users).
-        // OR we just rely on pagination if no query.
+        // Explicit Null Check for supabaseAdmin
+        if (!supabaseAdmin) {
+            return NextResponse.json({ error: 'Admin client not available' }, { status: 500 });
+        }
+        const adminClient = supabaseAdmin;
 
-        const { data, error } = await supabaseAdmin.auth.admin.listUsers({
+        // 3. Fetch Users via Admin API
+        const { data, error } = await adminClient.auth.admin.listUsers({
             page: page,
             perPage: limit
         });
@@ -41,13 +42,6 @@ export async function GET(req: NextRequest) {
         if (error) throw error;
 
         let users = data.users;
-
-        // Note: For real "Search by Email", listUsers doesn't support 'ilike'.
-        // If query exists, we might need to fetch ALL users or use a different strategy.
-        // For this implementation, if query is present, we try to fetch that specific user by ID or Email if possible,
-        // or effectively we have to do client-side filtering if the dataset is small, 
-        // or this API is limited. 
-        // Let's implement basic pagination for now. 
 
         // Enhance user objects with "Banned" status
         const enhancedUsers = users.map(u => ({
@@ -57,7 +51,9 @@ export async function GET(req: NextRequest) {
             last_sign_in_at: u.last_sign_in_at,
             banned_until: u.banned_until,
             role: u.role,
-            provider: u.app_metadata.provider || 'email'
+            provider: u.app_metadata.provider || 'email',
+            is_verified: u.app_metadata.is_verified || false,
+            is_premium: u.app_metadata.is_premium || false
         }));
 
         // Filter if query is present (simple implementation)
