@@ -1,45 +1,40 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import {
-    useReactTable,
-    getCoreRowModel,
-    flexRender,
-    SortingState,
-    ColumnDef
-} from '@tanstack/react-table';
-import { Search, ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, MoreVertical, Ban, Eye, Mail } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import UserDetailsModal from './UserDetailsModal';
 
+interface User {
+    id: string;
+    email: string;
+    created_at: string;
+    provider: string;
+    last_sign_in_at: string | null;
+    banned_until: string | null;
+}
+
 export default function UserTable() {
     const router = useRouter();
-    const [data, setData] = useState([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
-    const [sorting, setSorting] = useState<SortingState>([]);
-    const [globalFilter, setGlobalFilter] = useState('');
-    const [pagination, setPagination] = useState({
-        pageIndex: 0,
-        pageSize: 10,
-    });
-    const [pageCount, setPageCount] = useState(0);
-
-    // Modal State
+    const [searchQuery, setSearchQuery] = useState('');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
-    // Fetch Data
-    const fetchData = async () => {
+    const fetchUsers = async () => {
         setLoading(true);
         try {
-            const page = pagination.pageIndex + 1;
-            const limit = pagination.pageSize;
-            const query = globalFilter ? `&query=${encodeURIComponent(globalFilter)}` : '';
+            const query = searchQuery ? `&query=${encodeURIComponent(searchQuery)}` : '';
+            const res = await fetch(`/api/God-Mod-MH1214/users?page=${page}&limit=10${query}`, {
+                cache: 'no-store'
+            });
 
-            const res = await fetch(`/api/God-Mod-MH1214/users?page=${page}&limit=${limit}${query}`, { cache: 'no-store' });
             if (res.ok) {
-                const result = await res.json();
-                setData(result.users);
-                setPageCount(result.totalPages);
+                const data = await res.json();
+                setUsers(data.users || []);
+                setTotalPages(data.totalPages || 1);
             }
         } catch (error) {
             console.error('Failed to fetch users:', error);
@@ -48,191 +43,366 @@ export default function UserTable() {
         }
     };
 
-    // Debounce Search Effect
     useEffect(() => {
-        const timer = setTimeout(() => {
-            fetchData();
-        }, 300); // 300ms debounce
+        const timer = setTimeout(() => fetchUsers(), 300);
         return () => clearTimeout(timer);
-    }, [globalFilter, pagination.pageIndex, pagination.pageSize]); // Refetch on filter/page change
+    }, [searchQuery, page]);
 
-    const columns = useMemo<ColumnDef<any>[]>(
-        () => [
-            {
-                accessorKey: 'created_at',
-                header: 'Joined Date',
-                cell: info => {
-                    const value = info.getValue() as string;
-                    return value ? new Date(value).toLocaleDateString() : 'N/A';
-                },
-            },
-            {
-                accessorKey: 'email',
-                header: 'User',
-                cell: info => (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => setSelectedUserId(info.row.original.id)}>
-                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>
-                            {(info.getValue() as string).charAt(0).toUpperCase()}
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span style={{ fontWeight: 500, color: '#fff' }}>{info.getValue() as string}</span>
-                            <span style={{ fontSize: '0.75rem', color: '#888' }}>ID: {info.row.original.id.substring(0, 8)}...</span>
-                        </div>
-                    </div>
-                ),
-            },
-            {
-                accessorKey: 'provider',
-                header: 'Method',
-                cell: info => (
-                    <span style={{ textTransform: 'capitalize', color: '#aaa', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        {info.getValue() as string}
-                    </span>
-                ),
-            },
-            {
-                accessorKey: 'last_sign_in_at',
-                header: 'Last Active',
-                cell: info => info.getValue() ? new Date(info.getValue() as string).toLocaleString() : 'Never',
-            },
-            {
-                accessorKey: 'banned_until',
-                header: 'Status',
-                cell: info => {
-                    const isBanned = info.getValue() && new Date(info.getValue() as string) > new Date();
-                    return (
-                        <span className={`status-badge ${isBanned ? 'status-banned' : 'status-active'}`}>
-                            {isBanned ? 'BANNED' : 'ACTIVE'}
-                        </span>
-                    );
-                },
-            },
-            {
-                id: 'actions',
-                cell: props => (
-                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                        <button
-                            onClick={() => setSelectedUserId(props.row.original.id)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: '5px' }}
-                            title="View Details"
-                        >
-                            <MoreVertical size={18} />
-                        </button>
-                    </div>
-                ),
-            },
-        ],
-        []
-    );
+    const formatDate = (dateString: string | null) => {
+        if (!dateString) return 'Never';
+        try {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        } catch {
+            return 'Invalid Date';
+        }
+    };
 
-    const table = useReactTable({
-        data,
-        columns,
-        state: {
-            sorting,
-            globalFilter,
-            pagination
-        },
-        pageCount: pageCount, // manual pagination
-        manualPagination: true, // Tell table we handle pagination server-side
-        onSortingChange: setSorting,
-        onGlobalFilterChange: setGlobalFilter,
-        onPaginationChange: setPagination,
-        getCoreRowModel: getCoreRowModel(),
-        // getSortedRowModel: getSortedRowModel(),
-    });
+    const getStatusBadge = (user: User) => {
+        const isBanned = user.banned_until && new Date(user.banned_until) > new Date();
+        return (
+            <span style={{
+                padding: '4px 12px',
+                borderRadius: '20px',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                background: isBanned ? 'rgba(229, 9, 20, 0.1)' : 'rgba(70, 211, 105, 0.1)',
+                border: `1px solid ${isBanned ? 'rgba(229, 9, 20, 0.3)' : 'rgba(70, 211, 105, 0.3)'}`,
+                color: isBanned ? '#e50914' : '#46d369'
+            }}>
+                {isBanned ? 'BANNED' : 'ACTIVE'}
+            </span>
+        );
+    };
 
     return (
-        <div className="user-table-container">
-            {/* Modal */}
-            {selectedUserId && (
-                <UserDetailsModal
-                    userId={selectedUserId}
-                    onClose={() => setSelectedUserId(null)}
-                    onUpdate={fetchData}
-                />
-            )}
+        <div className="glass-card" style={{ padding: 0, overflow: 'hidden' }}>
+            {/* Header */}
+            <div style={{
+                padding: 'var(--spacing-lg)',
+                borderBottom: '1px solid var(--border-subtle)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 'var(--spacing-md)'
+            }}>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: 'var(--spacing-md)'
+                }}>
+                    <div>
+                        <h2 style={{
+                            margin: 0,
+                            fontSize: '1.5rem',
+                            fontWeight: 700,
+                            marginBottom: '4px'
+                        }}>
+                            User Management
+                        </h2>
+                        <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                            Total: {users.length} users
+                        </p>
+                    </div>
+                </div>
 
-            {/* Table Controls */}
-            <div className="table-controls">
-                <div style={{ position: 'relative' }}>
-                    <Search size={18} color="#888" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                {/* Search */}
+                <div style={{ position: 'relative', maxWidth: '400px' }}>
+                    <Search
+                        size={18}
+                        style={{
+                            position: 'absolute',
+                            left: '12px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            color: 'var(--text-tertiary)'
+                        }}
+                    />
                     <input
-                        value={globalFilter ?? ''}
-                        onChange={e => setGlobalFilter(e.target.value)}
-                        className="search-input"
+                        type="text"
                         placeholder="Search users by email..."
-                        style={{ paddingLeft: '40px' }}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        style={{
+                            width: '100%',
+                            padding: '10px 12px 10px 40px',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid var(--border-subtle)',
+                            borderRadius: '8px',
+                            color: 'var(--text-primary)',
+                            fontSize: '0.875rem',
+                            outline: 'none',
+                            transition: 'all var(--transition-fast)'
+                        }}
+                        onFocus={(e) => e.target.style.borderColor = 'var(--accent-primary)'}
+                        onBlur={(e) => e.target.style.borderColor = 'var(--border-subtle)'}
                     />
                 </div>
             </div>
 
-            {/* Table */}
-            <div style={{ overflowX: 'auto' }}>
-                <table className="user-table">
-                    <thead>
-                        {table.getHeaderGroups().map(headerGroup => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map(header => (
-                                    <th key={header.id} onClick={header.column.getToggleSortingHandler()}>
-                                        {flexRender(header.column.columnDef.header, header.getContext())}
-                                        {{
-                                            asc: ' 🔼',
-                                            desc: ' 🔽',
-                                        }[header.column.getIsSorted() as string] ?? null}
-                                    </th>
-                                ))}
-                            </tr>
+            {/* User Cards - Mobile Friendly */}
+            <div style={{ padding: 'var(--spacing-md)' }}>
+                {loading ? (
+                    <div style={{
+                        padding: '48px',
+                        textAlign: 'center',
+                        color: 'var(--text-secondary)'
+                    }}>
+                        Loading users...
+                    </div>
+                ) : users.length === 0 ? (
+                    <div style={{
+                        padding: '48px',
+                        textAlign: 'center',
+                        color: 'var(--text-secondary)'
+                    }}>
+                        No users found
+                    </div>
+                ) : (
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                        gap: 'var(--spacing-md)'
+                    }}>
+                        {users.map((user) => (
+                            <div
+                                key={user.id}
+                                className="user-card"
+                                style={{
+                                    background: 'rgba(255, 255, 255, 0.03)',
+                                    border: '1px solid var(--border-subtle)',
+                                    borderRadius: '12px',
+                                    padding: 'var(--spacing-md)',
+                                    cursor: 'pointer',
+                                    transition: 'all var(--transition-fast)'
+                                }}
+                                onClick={() => setSelectedUserId(user.id)}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                                    e.currentTarget.style.borderColor = 'var(--border-medium)';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                                    e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                {/* User Header */}
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 'var(--spacing-md)',
+                                    marginBottom: 'var(--spacing-md)'
+                                }}>
+                                    <div style={{
+                                        width: '48px',
+                                        height: '48px',
+                                        borderRadius: '50%',
+                                        background: 'linear-gradient(135deg, #e50914, #ff6b6b)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '1.25rem',
+                                        fontWeight: 700,
+                                        color: '#fff'
+                                    }}>
+                                        {user.email.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{
+                                            fontWeight: 600,
+                                            color: 'var(--text-primary)',
+                                            marginBottom: '2px',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap'
+                                        }}>
+                                            {user.email}
+                                        </div>
+                                        <div style={{
+                                            fontSize: '0.75rem',
+                                            color: 'var(--text-tertiary)'
+                                        }}>
+                                            ID: {user.id.substring(0, 8)}...
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* User Details */}
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr',
+                                    gap: 'var(--spacing-sm)',
+                                    marginBottom: 'var(--spacing-md)',
+                                    paddingTop: 'var(--spacing-md)',
+                                    borderTop: '1px solid var(--border-subtle)'
+                                }}>
+                                    <div>
+                                        <div style={{
+                                            fontSize: '0.7rem',
+                                            color: 'var(--text-tertiary)',
+                                            marginBottom: '4px',
+                                            textTransform: 'uppercase'
+                                        }}>
+                                            Joined
+                                        </div>
+                                        <div style={{
+                                            fontSize: '0.85rem',
+                                            color: 'var(--text-secondary)',
+                                            fontWeight: 500
+                                        }}>
+                                            {formatDate(user.created_at)}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div style={{
+                                            fontSize: '0.7rem',
+                                            color: 'var(--text-tertiary)',
+                                            marginBottom: '4px',
+                                            textTransform: 'uppercase'
+                                        }}>
+                                            Method
+                                        </div>
+                                        <div style={{
+                                            fontSize: '0.85rem',
+                                            color: 'var(--text-secondary)',
+                                            fontWeight: 500,
+                                            textTransform: 'capitalize'
+                                        }}>
+                                            {user.provider}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div style={{
+                                            fontSize: '0.7rem',
+                                            color: 'var(--text-tertiary)',
+                                            marginBottom: '4px',
+                                            textTransform: 'uppercase'
+                                        }}>
+                                            Last Active
+                                        </div>
+                                        <div style={{
+                                            fontSize: '0.85rem',
+                                            color: 'var(--text-secondary)',
+                                            fontWeight: 500
+                                        }}>
+                                            {formatDate(user.last_sign_in_at)}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div style={{
+                                            fontSize: '0.7rem',
+                                            color: 'var(--text-tertiary)',
+                                            marginBottom: '4px',
+                                            textTransform: 'uppercase'
+                                        }}>
+                                            Status
+                                        </div>
+                                        {getStatusBadge(user)}
+                                    </div>
+                                </div>
+
+                                {/* Action Button */}
+                                <button
+                                    style={{
+                                        width: '100%',
+                                        padding: '8px',
+                                        background: 'rgba(229, 9, 20, 0.1)',
+                                        border: '1px solid rgba(229, 9, 20, 0.3)',
+                                        borderRadius: '6px',
+                                        color: 'var(--accent-primary)',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        transition: 'all var(--transition-fast)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '6px'
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedUserId(user.id);
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = 'var(--accent-primary)';
+                                        e.currentTarget.style.color = '#fff';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = 'rgba(229, 9, 20, 0.1)';
+                                        e.currentTarget.style.color = 'var(--accent-primary)';
+                                    }}
+                                >
+                                    <Eye size={16} />
+                                    View Details
+                                </button>
+                            </div>
                         ))}
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr>
-                                <td colSpan={columns.length} style={{ textAlign: 'center', padding: '50px', color: '#888' }}>
-                                    Loading users...
-                                </td>
-                            </tr>
-                        ) : data.length === 0 ? (
-                            <tr>
-                                <td colSpan={columns.length} style={{ textAlign: 'center', padding: '50px', color: '#888' }}>
-                                    No users found.
-                                </td>
-                            </tr>
-                        ) : (
-                            table.getRowModel().rows.map(row => (
-                                <tr key={row.id}>
-                                    {row.getVisibleCells().map(cell => (
-                                        <td key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </td>
-                                    ))}
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                    </div>
+                )}
             </div>
 
             {/* Pagination */}
-            <div className="pagination-controls">
-                <span style={{ color: '#888', fontSize: '0.9rem', marginRight: '10px' }}>
-                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                </span>
-                <button
-                    className="page-btn"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    <ChevronLeft size={16} />
-                </button>
-                <button
-                    className="page-btn"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    <ChevronRight size={16} />
-                </button>
-            </div>
+            {totalPages > 1 && (
+                <div style={{
+                    padding: 'var(--spacing-lg)',
+                    borderTop: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: 'var(--spacing-md)'
+                }}>
+                    <button
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        style={{
+                            padding: '8px 16px',
+                            background: page === 1 ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid var(--border-subtle)',
+                            borderRadius: '6px',
+                            color: page === 1 ? 'var(--text-tertiary)' : 'var(--text-primary)',
+                            cursor: page === 1 ? 'not-allowed' : 'pointer',
+                            fontSize: '0.875rem',
+                            fontWeight: 600
+                        }}
+                    >
+                        Previous
+                    </button>
+                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                        Page {page} of {totalPages}
+                    </span>
+                    <button
+                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                        style={{
+                            padding: '8px 16px',
+                            background: page === totalPages ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid var(--border-subtle)',
+                            borderRadius: '6px',
+                            color: page === totalPages ? 'var(--text-tertiary)' : 'var(--text-primary)',
+                            cursor: page === totalPages ? 'not-allowed' : 'pointer',
+                            fontSize: '0.875rem',
+                            fontWeight: 600
+                        }}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
+
+            {/* User Details Modal */}
+            {selectedUserId && (
+                <UserDetailsModal
+                    userId={selectedUserId}
+                    onClose={() => setSelectedUserId(null)}
+                    onUpdate={fetchUsers}
+                />
+            )}
         </div>
     );
 }

@@ -39,27 +39,39 @@
    GLOBAL STYLES
    ============================================ */
 
-html,
+* {
+    box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    height: 100%;
+}
+
 body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    min-height: 100%;
+    position: relative;
 }
 
 .admin-layout {
-    display: flex;
+    position: relative;
     min-height: 100vh;
     background: var(--bg-primary);
     color: var(--text-primary);
-    overflow-x: hidden;
 }
 
 .admin-main {
-    flex: 1;
-    margin-left: 0;
-    transition: margin-left var(--transition-base);
     min-height: 100vh;
-    overflow-y: auto;
+    margin-left: 0;
+    padding: 0;
+    transition: margin-left var(--transition-base);
+    position: relative;
+    z-index: 1;
 }
 
 @media (min-width: 1024px) {
@@ -78,15 +90,20 @@ body {
     left: 0;
     width: var(--sidebar-width);
     height: 100vh;
+    height: 100dvh;
+    /* For mobile browsers */
     background: var(--bg-glass);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-right: 1px solid var(--border-subtle);
     display: flex;
     flex-direction: column;
-    z-index: 100;
+    z-index: 1000;
     transform: translateX(-100%);
     transition: transform var(--transition-base);
+    overflow: hidden;
 }
+
 
 .premium-sidebar.open {
     transform: translateX(0);
