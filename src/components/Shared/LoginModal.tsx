@@ -46,7 +46,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 if (error) throw error;
                 onClose(); // Success
             } else {
-            } else {
                 // Call our Custom API for Signup (To send Premium Email + Password)
                 const res = await fetch('/api/auth/signup', {
                     method: 'POST',
