@@ -3,6 +3,8 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic'; // Ensure this route is never cached
+
 export async function GET(req: NextRequest) {
     try {
         // 1. Security Check: Verify User is Admin
@@ -28,25 +30,29 @@ export async function GET(req: NextRequest) {
         }
 
         if (!supabaseAdmin) {
-            return NextResponse.json({ error: 'Server configuration error: Admin client not initialized' }, { status: 500 });
+            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
         }
 
         // 2. Fetch Stats
-        console.log('Admin Stats API: Fetching data...');
+        console.log('Admin Stats API: Fetching data (Dynamic)...');
 
-        // Total Users: Use listUsers() to get the total count
+        // Total Users: Fetch a batch of users to ensure we get a count even if 'total' is missing
+        // This mirrors the User Management page which we know works.
         const { data, error: userError } = await supabaseAdmin.auth.admin.listUsers({
             page: 1,
-            perPage: 1
+            perPage: 1000 // Fetch up to 1000 users to get a reliable count for now
         });
 
         let userCount = 0;
         if (userError) {
             console.error('Stats Error (Users):', userError);
         } else {
-            // TypeScript doesn't always see 'total' in the union type, so we cast to any or check
-            userCount = (data as any).total || 0;
-            console.log('Stats Check: User Count (from listUsers) =', userCount);
+            const users = data.users || [];
+            // Use 'total' if available and valid, otherwise fallback to the length of fetched users
+            const total = (data as any).total;
+            userCount = (typeof total === 'number' && total > 0) ? total : users.length;
+
+            console.log('Stats Check: Users Length =', users.length, 'Total Prop =', total, 'Final Count =', userCount);
         }
 
         // Watchlist Count: Query the table directly
