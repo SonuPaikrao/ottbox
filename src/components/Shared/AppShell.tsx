@@ -6,17 +6,14 @@ import MobileNav from "@/components/Navbar/MobileNav";
 import Footer from "@/components/Shared/Footer";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-    const pathname = usePathname();
-    const isAdmin = pathname?.startsWith('/God-Mod-MH1214');
-
     return (
         <>
-            {!isAdmin && <Navbar />}
+            <Navbar />
             <main style={{ minHeight: '100vh' }}>
                 {children}
             </main>
-            {!isAdmin && <Footer />}
-            {!isAdmin && <MobileNav />}
+            <Footer />
+            <MobileNav />
         </>
     );
 }
