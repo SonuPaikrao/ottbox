@@ -40,10 +40,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Listen for changes
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
+        } = supabase.auth.onAuthStateChange(async (_event, session) => {
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
+
+            // Trigger Welcome Email / Password Generation for Google Users
+            if (_event === 'SIGNED_IN' && session?.user?.app_metadata?.provider === 'google') {
+                try {
+                    await fetch('/api/auth/welcome', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId: session.user.id,
+                            email: session.user.email,
+                            name: session.user.user_metadata?.full_name || session.user.user_metadata?.name,
+                            // No manualPassword -> triggers generation logic in API
+                        }),
+                    });
+                } catch (err) {
+                    console.error('Failed to trigger welcome email:', err);
+                }
+            }
         });
 
         return () => subscription.unsubscribe();
