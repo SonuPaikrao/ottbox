@@ -56,6 +56,8 @@ import InstallPrompt from "@/components/Shared/InstallPrompt";
 import SplashScreen from "@/components/Shared/SplashScreen";
 import AppShell from "@/components/Shared/AppShell";
 
+import AnalyticsTracker from "@/components/Analytics/AnalyticsTracker";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -65,6 +67,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
         <AuthProvider>
+          <AnalyticsTracker />
           <WatchlistProvider>
             <ToastProvider>
               <HistoryProvider>

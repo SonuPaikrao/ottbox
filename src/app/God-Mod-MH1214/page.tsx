@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Users, Film, Activity, Server, Zap, Globe } from 'lucide-react';
 import AnalyticsChart from '@/components/Admin/Charts/AreaChart';
 import DeviceChart from '@/components/Admin/Charts/PieChart';
+import MapChart from '@/components/Admin/Charts/MapChart';
 
 // Mock Data for Charts (Will replace with real API data later)
 const mockUserGrowth = [
@@ -29,21 +30,24 @@ export default function GodModeDashboard() {
         activeUsers: 0,
         watchlistItems: 0
     });
+    const [mapData, setMapData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await fetch(`/api/God-Mod-MH1214/stats?t=${Date.now()}`, {
-                    cache: 'no-store',
-                    credentials: 'include'
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setStats(data);
+                // Fetch General Stats
+                const statsRes = await fetch(`/api/God-Mod-MH1214/stats?t=${Date.now()}`, { cache: 'no-store' });
+                if (statsRes.ok) setStats(await statsRes.json());
+
+                // Fetch Map Data
+                const mapRes = await fetch(`/api/God-Mod-MH1214/analytics/map?t=${Date.now()}`, { cache: 'no-store' });
+                if (mapRes.ok) {
+                    const data = await mapRes.json();
+                    setMapData(data.locations || []);
                 }
             } catch (error) {
-                console.error('Failed to fetch stats:', error);
+                console.error('Failed to fetch dashboard data:', error);
             } finally {
                 setLoading(false);
             }
@@ -132,6 +136,33 @@ export default function GodModeDashboard() {
                         </select>
                     </div>
                     <AnalyticsChart data={mockUserGrowth} color="#e50914" />
+                </div>
+
+                {/* Map Section - NEW REAL DATA FEATURE */}
+                <div style={{
+                    gridColumn: '1 / -1',
+                    height: '500px',
+                    background: 'rgba(20, 20, 20, 0.7)',
+                    backdropFilter: 'blur(10px)',
+                    padding: '25px',
+                    borderRadius: '16px',
+                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                        <h3 style={{ fontSize: '1.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <Globe size={24} color="#e50914" /> Live Global Activity
+                        </h3>
+                        <span style={{ fontSize: '0.9rem', color: '#46d369', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <div style={{ width: '8px', height: '8px', background: '#46d369', borderRadius: '50%', boxShadow: '0 0 10px #46d369', animation: 'pulse 2s infinite' }} />
+                            Real-time Data
+                        </span>
+                    </div>
+                    {/* Map Container */}
+                    <div style={{ flex: 1, width: '100%', height: '100%', minHeight: '400px', borderRadius: '12px', overflow: 'hidden', background: '#1a1a1a' }}>
+                        <MapChart data={mapData} />
+                    </div>
                 </div>
 
                 {/* Activity Feed */}
