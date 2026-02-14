@@ -6,46 +6,42 @@ import AnalyticsChart from '@/components/Admin/Charts/AreaChart';
 import DeviceChart from '@/components/Admin/Charts/PieChart';
 import MapChart from '@/components/Admin/Charts/MapChart';
 
-// Mock Data for Charts (Will replace with real API data later)
-const mockUserGrowth = [
-    { name: 'Mon', value: 400 },
-    { name: 'Tue', value: 300 },
-    { name: 'Wed', value: 550 },
-    { name: 'Thu', value: 450 },
-    { name: 'Fri', value: 600 },
-    { name: 'Sat', value: 800 },
-    { name: 'Sun', value: 750 },
-];
-
-const mockActivityFeed = [
-    { user: 'John Doe', action: 'Signed up', time: '2 mins ago', color: '#46d369' },
-    { user: 'Sarah Smith', action: 'Watched "Inception"', time: '15 mins ago', color: '#e50914' },
-    { user: 'Mike Ross', action: 'Failed Login Attempt', time: '1 hour ago', color: '#ffa502' },
-    { user: 'Admin', action: 'Updated System Settings', time: '2 hours ago', color: '#fff' },
-];
-
 export default function GodModeDashboard() {
     const [stats, setStats] = useState({
         totalUsers: 0,
         activeUsers: 0,
-        watchlistItems: 0
+        watchlistItems: 0,
+        userGrowth: []
     });
     const [mapData, setMapData] = useState([]);
+    const [activityData, setActivityData] = useState({
+        activityFeed: [],
+        deviceStats: []
+    });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchStats = async () => {
+        const fetchDashboardData = async () => {
             try {
-                // Fetch General Stats
-                const statsRes = await fetch(`/api/God-Mod-MH1214/stats?t=${Date.now()}`, { cache: 'no-store' });
+                const now = Date.now();
+                // 1. Fetch General Stats & User Growth
+                const statsRes = await fetch(`/api/God-Mod-MH1214/stats?t=${now}`, { cache: 'no-store' });
                 if (statsRes.ok) setStats(await statsRes.json());
 
-                // Fetch Map Data
-                const mapRes = await fetch(`/api/God-Mod-MH1214/analytics/map?t=${Date.now()}`, { cache: 'no-store' });
+                // 2. Fetch Map Data
+                const mapRes = await fetch(`/api/God-Mod-MH1214/analytics/map?t=${now}`, { cache: 'no-store' });
                 if (mapRes.ok) {
                     const data = await mapRes.json();
                     setMapData(data.locations || []);
                 }
+
+                // 3. Fetch Activity Feed & Device Breakdown
+                const activityRes = await fetch(`/api/God-Mod-MH1214/analytics/activity?t=${now}`, { cache: 'no-store' });
+                if (activityRes.ok) {
+                    const data = await activityRes.json();
+                    setActivityData(data);
+                }
+
             } catch (error) {
                 console.error('Failed to fetch dashboard data:', error);
             } finally {
@@ -53,13 +49,13 @@ export default function GodModeDashboard() {
             }
         };
 
-        fetchStats();
+        fetchDashboardData();
     }, []);
 
     const cards = [
-        { title: 'Total Users', value: stats.totalUsers || '0', icon: Users, color: '#e50914', trend: '+12%' },
-        { title: 'Watchlist Items', value: stats.watchlistItems || '0', icon: Film, color: '#46d369', trend: '+5%' },
-        { title: 'Active Sessions', value: stats.activeUsers || '0', icon: Activity, color: '#ffa502', trend: '+8%' },
+        { title: 'Total Users', value: stats.totalUsers || '0', icon: Users, color: '#e50914', trend: 'Live' },
+        { title: 'Watchlist Items', value: stats.watchlistItems || '0', icon: Film, color: '#46d369', trend: 'Database' },
+        { title: 'Active Sessions', value: stats.activeUsers || '0', icon: Activity, color: '#ffa502', trend: 'Approx' },
         { title: 'System Health', value: '98%', icon: Server, color: '#00d2d3', trend: 'Stable' },
     ];
 
@@ -129,16 +125,20 @@ export default function GodModeDashboard() {
                     border: '1px solid rgba(255, 255, 255, 0.05)'
                 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                        <h3 style={{ fontSize: '1.2rem', fontWeight: 600 }}>User Growth</h3>
-                        <select style={{ background: '#000', border: '1px solid #333', color: '#fff', padding: '5px 10px', borderRadius: '6px', fontSize: '0.9rem' }}>
-                            <option>Last 7 Days</option>
-                            <option>Last 30 Days</option>
-                        </select>
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 600 }}>User Growth (7 Days)</h3>
+                        <Activity size={20} color="#e50914" />
                     </div>
-                    <AnalyticsChart data={mockUserGrowth} color="#e50914" />
+                    {/* Real Data or Empty State */}
+                    {stats.userGrowth && stats.userGrowth.length > 0 ? (
+                        <AnalyticsChart data={stats.userGrowth} color="#e50914" />
+                    ) : (
+                        <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>
+                            No user growth data available yet.
+                        </div>
+                    )}
                 </div>
 
-                {/* Map Section - NEW REAL DATA FEATURE */}
+                {/* Map Section */}
                 <div style={{
                     gridColumn: '1 / -1',
                     height: '500px',
@@ -159,7 +159,6 @@ export default function GodModeDashboard() {
                             Real-time Data
                         </span>
                     </div>
-                    {/* Map Container */}
                     <div style={{ flex: 1, width: '100%', height: '100%', minHeight: '400px', borderRadius: '12px', overflow: 'hidden', background: '#1a1a1a' }}>
                         <MapChart data={mapData} />
                     </div>
@@ -174,51 +173,54 @@ export default function GodModeDashboard() {
                     border: '1px solid rgba(255, 255, 255, 0.05)'
                 }}>
                     <h3 style={{ fontSize: '1.2rem', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <Zap size={18} color="#ffa502" /> Live Activity
+                        <Zap size={18} color="#ffa502" /> Live Activity Log
                     </h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                        {mockActivityFeed.map((item, i) => (
-                            <div key={i} style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color, boxShadow: `0 0 10px ${item.color}` }}></div>
-                                <div style={{ flex: 1 }}>
-                                    <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 500 }}>
-                                        <span style={{ color: '#fff' }}>{item.user}</span> <span style={{ color: '#888' }}>{item.action}</span>
-                                    </p>
-                                    <p style={{ margin: 0, fontSize: '0.8rem', color: '#555', marginTop: '2px' }}>{item.time}</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '400px', overflowY: 'auto' }}>
+                        {activityData.activityFeed && activityData.activityFeed.length > 0 ? (
+                            activityData.activityFeed.map((item: any, i) => (
+                                <div key={i} style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color, boxShadow: `0 0 10px ${item.color}` }}></div>
+                                    <div style={{ flex: 1 }}>
+                                        <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 500 }}>
+                                            <span style={{ color: '#fff' }}>{item.user}</span> <span style={{ color: '#888' }}>{item.action}</span>
+                                        </p>
+                                        <p style={{ margin: 0, fontSize: '0.8rem', color: '#555', marginTop: '2px' }}>{item.time}</p>
+                                    </div>
                                 </div>
+                            ))
+                        ) : (
+                            <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
+                                No recent activity.
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
 
-                {/* Device Stats - NEW SECTION */}
+                {/* Device Stats */}
                 <div style={{
                     background: 'rgba(20, 20, 20, 0.7)',
                     backdropFilter: 'blur(10px)',
                     padding: '25px',
                     borderRadius: '16px',
                     border: '1px solid rgba(255, 255, 255, 0.05)',
-                    gridColumn: '1 / -1' // Span full width on bottom
+                    gridColumn: '1 / -1'
                 }}>
                     <h3 style={{ fontSize: '1.2rem', fontWeight: 600, marginBottom: '20px' }}>Device Breakdown</h3>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap' }}>
                         <div style={{ flex: 1, minWidth: '300px' }}>
-                            <DeviceChart data={[
-                                { name: 'Mobile', value: 65, color: '#e50914' },
-                                { name: 'Desktop', value: 25, color: '#46d369' },
-                                { name: 'Tablet', value: 10, color: '#ffa502' },
-                            ]} />
+                            {activityData.deviceStats && activityData.deviceStats.length > 0 ? (
+                                <DeviceChart data={activityData.deviceStats} />
+                            ) : (
+                                <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>
+                                    Waiting for device data...
+                                </div>
+                            )}
                         </div>
                         <div style={{ flex: 1, padding: '20px', minWidth: '300px' }}>
                             <div style={{ marginBottom: '20px', padding: '15px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
                                 <Globe size={20} color="#e50914" style={{ marginBottom: '10px' }} />
-                                <h4 style={{ margin: 0 }}>Top Region: India</h4>
-                                <p style={{ color: '#888', margin: 0, fontSize: '0.9rem' }}>45% of total traffic</p>
-                            </div>
-                            <div style={{ padding: '15px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
-                                <Activity size={20} color="#46d369" style={{ marginBottom: '10px' }} />
-                                <h4 style={{ margin: 0 }}>Avg. Watch Time</h4>
-                                <p style={{ color: '#888', margin: 0, fontSize: '0.9rem' }}>42 Minutes / Session</p>
+                                <h4 style={{ margin: 0 }}>Global Traffic</h4>
+                                <p style={{ color: '#888', margin: 0, fontSize: '0.9rem' }}>Tracking active regions</p>
                             </div>
                         </div>
                     </div>

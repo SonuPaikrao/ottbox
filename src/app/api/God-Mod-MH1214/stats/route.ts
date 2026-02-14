@@ -81,10 +81,29 @@ export async function GET(req: NextRequest) {
             console.log('Stats Check: Watchlist Count =', watchlistCount);
         }
 
+        // 3. Calculate User Growth (Last 7 Days)
+        const users = data.users || [];
+        const growthData = [];
+        const today = new Date();
+
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date(today);
+            d.setDate(today.getDate() - i);
+            const dateStr = d.toISOString().split('T')[0];
+            const displayDate = d.toLocaleDateString('en-US', { weekday: 'short' });
+
+            // Count users created on this date
+            // Note: This matches strictly by day. In a large scale app, do this via SQL group by.
+            const count = users.filter((u: any) => u.created_at.startsWith(dateStr)).length;
+
+            growthData.push({ name: displayDate, value: count });
+        }
+
         return NextResponse.json({
             totalUsers: userCount || 0,
             activeUsers: userCount || 0, // Placeholder, usually requires tracking active sessions
-            watchlistItems: watchlistCount || 0
+            watchlistItems: watchlistCount || 0,
+            userGrowth: growthData
         });
 
     } catch (error: any) {

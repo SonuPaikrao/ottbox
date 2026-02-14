@@ -27,7 +27,25 @@ export default function AnalyticsTracker() {
                     return;
                 }
 
-                // 2. Send to our API
+                // 2. Parse User Agent (Basic Detection)
+                const ua = navigator.userAgent;
+                let device = 'Desktop';
+                if (/Mobi|Android/i.test(ua)) device = 'Mobile';
+                else if (/Tablet|iPad/i.test(ua)) device = 'Tablet';
+
+                let os = 'Unknown';
+                if (ua.indexOf("Win") != -1) os = "Windows";
+                if (ua.indexOf("Mac") != -1) os = "MacOS";
+                if (ua.indexOf("Linux") != -1) os = "Linux";
+                if (ua.indexOf("Android") != -1) os = "Android";
+                if (ua.indexOf("like Mac") != -1) os = "iOS";
+
+                let browser = 'Unknown';
+                if (ua.indexOf("Chrome") != -1) browser = "Chrome";
+                else if (ua.indexOf("Safari") != -1) browser = "Safari";
+                else if (ua.indexOf("Firefox") != -1) browser = "Firefox";
+
+                // 3. Send to our API
                 await fetch('/api/analytics/track', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -38,7 +56,11 @@ export default function AnalyticsTracker() {
                         region: data.region,
                         latitude: data.latitude,
                         longitude: data.longitude,
-                        userId: user?.id || null
+                        userId: user?.id || null,
+                        device_type: device,
+                        os: os,
+                        browser: browser,
+                        activity_type: 'visit'
                     })
                 });
 
