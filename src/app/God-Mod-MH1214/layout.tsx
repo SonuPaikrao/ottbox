@@ -27,13 +27,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             if (loading) return;
 
             // Allow access to login page without check
-            if (pathname === '/admin/login') {
+            if (pathname === '/God-Mod-MH1214/login') {
                 setIsAuthorized(true);
                 return;
             }
 
             if (!user) {
-                router.replace('/admin/login');
+                router.replace('/God-Mod-MH1214/login');
                 return;
             }
 
@@ -46,7 +46,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             if (error || !data) {
                 console.error('Admin Check Failed:', error);
-                router.replace('/admin/login');
+                router.replace('/God-Mod-MH1214/login');
             } else {
                 setIsAuthorized(true);
             }
@@ -64,7 +64,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     // Special Layout for Login Page (No Sidebar, Full Screen)
-    if (pathname === '/admin/login') {
+    if (pathname === '/God-Mod-MH1214/login') {
         return <>{children}</>;
     }
 
@@ -100,18 +100,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {children}
             </main>
 
-            <style jsx global>{`
-                .admin-mobile-header { display: none; }
-                .admin-sidebar-wrapper { position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; transition: transform 0.3s ease; }
-                .admin-content { flex: 1; margin-left: 250px; padding: 40px; width: 100%; }
-                
-                @media (max-width: 768px) {
-                    .admin-mobile-header { display: flex; }
-                    .admin-sidebar-wrapper { transform: translateX(-100%); width: 250px; }
-                    .admin-sidebar-wrapper.open { transform: translateX(0); }
-                    .admin-content { margin-left: 0; padding: 20px; padding-top: 80px; }
-                }
-            `}</style>
+            import './admin.css';
         </div>
     );
 }

@@ -1,0 +1,40 @@
+.admin-mobile-header {
+    display: none !important;
+}
+
+.admin-sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    transition: transform 0.3s ease;
+}
+
+.admin-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 40px;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .admin-mobile-header {
+        display: flex !important;
+    }
+
+    .admin-sidebar-wrapper {
+        transform: translateX(-100%);
+        width: 250px;
+    }
+
+    .admin-sidebar-wrapper.open {
+        transform: translateX(0);
+    }
+
+    .admin-content {
+        margin-left: 0;
+        padding: 20px;
+        padding-top: 80px;
+    }
+}

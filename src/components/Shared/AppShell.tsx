@@ -7,7 +7,7 @@ import Footer from "@/components/Shared/Footer";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const isAdmin = pathname?.startsWith('/admin');
+    const isAdmin = pathname?.startsWith('/God-Mod-MH1214');
 
     return (
         <>

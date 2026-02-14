@@ -6,7 +6,7 @@ import { createBrowserClient } from '@supabase/ssr';
 import { Lock, Mail, Key } from 'lucide-react';
 
 export default function AdminLogin() {
-    const [email, setEmail] = useState('paikraov58@gmail.com');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -47,7 +47,7 @@ export default function AdminLogin() {
             }
 
             // 3. Success
-            router.push('/admin');
+            router.push('/God-Mod-MH1214');
             router.refresh();
 
         } catch (err: any) {

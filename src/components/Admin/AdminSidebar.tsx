@@ -8,8 +8,8 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
     const pathname = usePathname();
 
     const links = [
-        { name: 'Dashboard', href: '/admin', icon: BarChart2 },
-        { name: 'User Management', href: '/admin/users', icon: Users },
+        { name: 'Dashboard', href: '/God-Mod-MH1214', icon: BarChart2 },
+        { name: 'User Management', href: '/God-Mod-MH1214/users', icon: Users },
     ];
 
     return (
