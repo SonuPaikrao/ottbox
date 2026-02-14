@@ -1,6 +1,6 @@
 
 export const getWelcomeEmailHtml = (name: string, password?: string, verificationLink?: string) => {
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,7 +11,7 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
     body { margin: 0; padding: 0; background-color: #000000; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff; }
     .container { max-width: 600px; margin: 0 auto; background-color: #141414; overflow: hidden; }
     .header { padding: 40px 20px; text-align: center; background: linear-gradient(180deg, rgba(229,9,20,0.1) 0%, rgba(20,20,20,0) 100%); border-bottom: 1px solid #333; }
-    .logo { color: #e50914; font-size: 32px; font-weight: 800; letter-spacing: -1px; text-decoration: none; display: inline-block; text-transform: uppercase; }
+    .logo { display: block; margin: 0 auto; max-width: 150px; height: auto; }
     .content { padding: 40px 30px; }
     .greeting { font-size: 24px; font-weight: 700; margin-bottom: 20px; color: #ffffff; }
     .text { font-size: 16px; line-height: 1.6; color: #cccccc; margin-bottom: 20px; }
@@ -33,7 +33,11 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
   <div class="container">
     <!-- Header with Logo -->
     <div class="header">
-      <a href="${process.env.NEXT_PUBLIC_SITE_URL}" class="logo">OTT BOX</a>
+      <a href="${process.env.NEXT_PUBLIC_SITE_URL}" style="text-decoration: none;">
+        <!-- Using absolute path for logo -->
+        <img src="https://ott-box-weld.vercel.app/logo.svg" alt="OTT BOX" class="logo" width="40" height="40" style="width: 40px; height: 40px;" />
+        <div style="color: #e50914; font-size: 24px; font-weight: 800; letter-spacing: -1px; margin-top: 10px;">OTT BOX</div>
+      </a>
     </div>
 
     <!-- Main Content -->
@@ -42,9 +46,9 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
       
       <p class="text">
         ${verificationLink
-            ? "You're just one step away from unlimited entertainment. Please confirm your account below."
-            : "Your journey into unlimited entertainment starts here. We've curated the best movies and series just for you."
-        }
+      ? "You're just one step away from unlimited entertainment. Please confirm your account below."
+      : "Your journey into unlimited entertainment starts here. We've curated the best movies and series just for you."
+    }
       </p>
 
       ${password ? `
@@ -63,7 +67,6 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
       </p>
 
       <!-- CTA Button -->
-      <!-- If verification link exists, use it. Otherwise go to site. -->
       <a href="${verificationLink || process.env.NEXT_PUBLIC_SITE_URL}" class="cta-button">
         ${verificationLink ? 'Confirm Account' : 'Start Watching Now'}
       </a>
@@ -72,12 +75,14 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
     <!-- Footer -->
     <div class="footer">
       <div class="social-links">
-        <a href="#" class="social-link">Instagram</a> • 
-        <a href="#" class="social-link">Twitter</a> • 
-        <a href="#" class="social-link">Help Center</a>
+        <a href="https://instagram.com" class="social-link">Instagram</a> • 
+        <a href="https://twitter.com" class="social-link">Twitter</a> • 
+        <a href="https://github.com/SonuPaikrao" class="social-link">Github</a>
       </div>
       <p>&copy; ${new Date().getFullYear()} OTT Box. All rights reserved.</p>
-      <p>This is an automated message, please do not reply.</p>
+      <p style="margin-top: 10px; font-size: 12px; color: #888;">
+        Made with ❤️ & ☕ by <strong style="color: #ccc;">Sonu Rao</strong>
+      </p>
     </div>
   </div>
 </body>
