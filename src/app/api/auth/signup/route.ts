@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
         // 1. Generate Signup Link (This creates the user if they don't exist)
         // "type": "signup" returns a link that confirms the user's email.
         // It does NOT send an email automatically.
+        console.log('Generating signup link for:', email);
         const { data, error } = await supabaseAdmin.auth.admin.generateLink({
             type: 'signup',
             email,

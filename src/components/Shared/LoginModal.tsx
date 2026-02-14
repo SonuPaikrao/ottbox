@@ -62,7 +62,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     throw new Error(data.error || 'Signup failed');
                 }
 
-                setMessage('Account created! Check your email for login details.');
+                setMessage('Premium Account created! Check your email (and Spam) for login details.');
             }
         } catch (err: any) {
             setError(err.message || 'Authentication failed');
