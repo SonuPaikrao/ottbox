@@ -54,9 +54,15 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
     
     <!-- Header -->
     <div class="header">
-      <a href="${process.env.NEXT_PUBLIC_SITE_URL}" style="text-decoration: none;">
-        <img src="${process.env.NEXT_PUBLIC_SITE_URL}/logo.svg" alt="Logo" class="logo" />
-        <h1 class="brand-name">OTT BOX</h1>
+      <a href="${process.env.NEXT_PUBLIC_SITE_URL}" style="text-decoration: none; display: inline-block;">
+        <!-- Embedded SVG Logo -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e50914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto;">
+            <path d="M18 8a2 2 0 0 0 0-4 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0 0 4"></path>
+            <path d="M10 22 9 8"></path>
+            <path d="m14 22 1-14"></path>
+            <path d="M20 8c.5 0 .9.4.8 1l-2.6 12c-.1.5-.7 1-1.2 1H7c-.6 0-1.1-.4-1.2-1L3.2 9c-.1-.6.3-1 .8-1Z"></path>
+        </svg>
+        <h1 class="brand-name" style="margin-top: 10px;">OTT BOX</h1>
       </a>
     </div>
 
