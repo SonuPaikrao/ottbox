@@ -22,9 +22,19 @@ export async function GET(req: NextRequest) {
         );
 
         const { data: { user } } = await supabase.auth.getUser();
-        const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
-        if (!user || user.email !== adminEmail) {
+        if (!user || !user.email) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // 2. Security Check: Verify against 'admins' table
+        const { data: adminRecord, error: adminError } = await supabase
+            .from('admins')
+            .select('email')
+            .eq('email', user.email)
+            .single();
+
+        if (adminError || !adminRecord) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
         }
 
@@ -71,9 +81,19 @@ export async function DELETE(req: NextRequest) {
         );
 
         const { data: { user } } = await supabase.auth.getUser();
-        const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
-        if (!user || user.email !== adminEmail) {
+        if (!user || !user.email) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // 2. Security Check: Verify against 'admins' table
+        const { data: adminRecord, error: adminError } = await supabase
+            .from('admins')
+            .select('email')
+            .eq('email', user.email)
+            .single();
+
+        if (adminError || !adminRecord) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
         }
 

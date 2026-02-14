@@ -17,7 +17,8 @@ export default function AdminDashboard() {
                 console.log('Dashboard: Fetching stats...');
                 // Add timestamp to prevent browser caching
                 const res = await fetch(`/api/admin/stats?t=${Date.now()}`, {
-                    cache: 'no-store'
+                    cache: 'no-store',
+                    credentials: 'include'
                 });
 
                 console.log('Dashboard: API Status:', res.status);

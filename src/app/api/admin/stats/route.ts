@@ -10,6 +10,10 @@ export async function GET(req: NextRequest) {
         // 1. Security Check: Verify User is Admin
         const cookieStore = await cookies();
 
+        console.log('--- DEBUG COOKIES ---');
+        console.log('Cookies received:', cookieStore.getAll().map(c => c.name));
+        console.log('---------------------');
+
         const supabase = createServerClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -23,15 +27,21 @@ export async function GET(req: NextRequest) {
         );
 
         const { data: { user } } = await supabase.auth.getUser();
-        const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
-        if (!user || user.email !== adminEmail) {
-            console.error('Admin Stats 403: Check Failed.');
-            console.log('--- DEBUG AUTH ---');
-            console.log('User:', user ? user.email : 'No User Session Found');
-            console.log('Expected Admin:', adminEmail || 'ENV VAR MISSING');
-            console.log('------------------');
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+        if (!user || !user.email) {
+            return NextResponse.json({ error: 'Unauthorized: No User Session' }, { status: 401 });
+        }
+
+        // 2. Security Check: Verify against 'admins' table
+        const { data: adminRecord, error: adminError } = await supabase
+            .from('admins')
+            .select('email')
+            .eq('email', user.email)
+            .single();
+
+        if (adminError || !adminRecord) {
+            console.error('Admin Stats 403: Not in Admins Table', user.email);
+            return NextResponse.json({ error: 'Unauthorized: Access Denied' }, { status: 403 });
         }
 
         if (!supabaseAdmin) {

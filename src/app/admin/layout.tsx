@@ -1,8 +1,9 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { createBrowserClient } from '@supabase/ssr';
 import AdminSidebar from '@/components/Admin/AdminSidebar';
 
 import { useRef } from 'react';
@@ -15,15 +16,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const pathname = usePathname();
+
     useEffect(() => {
-        // ... existing auth check
-        if (!loading) {
-            const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-            if (!user) router.replace('/');
-            else if (user.email !== adminEmail) router.replace('/');
-            else setIsAuthorized(true);
-        }
-    }, [user, loading, router]);
+        const checkAdmin = async () => {
+            if (loading) return;
+
+            // Allow access to login page without check
+            if (pathname === '/admin/login') {
+                setIsAuthorized(true);
+                return;
+            }
+
+            if (!user) {
+                router.replace('/admin/login');
+                return;
+            }
+
+            // Verify against 'admins' table
+            const { data, error } = await supabase
+                .from('admins')
+                .select('email')
+                .eq('email', user.email)
+                .single();
+
+            if (error || !data) {
+                console.error('Admin Check Failed:', error);
+                router.replace('/admin/login');
+            } else {
+                setIsAuthorized(true);
+            }
+        };
+
+        checkAdmin();
+    }, [user, loading, router, pathname]);
 
     if (loading || !isAuthorized) {
         return (/* ... loading state */
