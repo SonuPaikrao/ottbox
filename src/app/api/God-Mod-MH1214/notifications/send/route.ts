@@ -7,6 +7,8 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
     try {
+        console.log('🔔 [Notification API] Request received');
+
         // 1. Auth Guard
         const cookieStore = await cookies();
         const supabase = createServerClient(
@@ -15,53 +17,68 @@ export async function POST(req: NextRequest) {
             { cookies: { get(name: string) { return cookieStore.get(name)?.value; } } }
         );
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        console.log('👤 [Notification API] User:', user?.email);
+
+        if (!user) {
+            console.log('❌ [Notification API] Unauthorized - no user');
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
         // Admin Check
         const { data: adminRecord } = await supabase.from('admins').select('email').eq('email', user.email).single();
-        if (!adminRecord) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        console.log('🛡️ [Notification API] Admin check:', adminRecord ? 'PASSED' : 'FAILED');
 
-        if (!supabaseAdmin) return NextResponse.json({ error: 'Admin client not available' }, { status: 500 });
+        if (!adminRecord) {
+            console.log('❌ [Notification API] Forbidden - not admin');
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
+        if (!supabaseAdmin) {
+            console.log('❌ [Notification API] Admin client not available');
+            return NextResponse.json({ error: 'Admin client not available' }, { status: 500 });
+        }
 
         const body = await req.json();
         const { title, message, type, target, userId } = body;
-        // target: 'all' | 'user'
+        console.log('📋 [Notification API] Payload:', { title, message, type, target, userId });
 
         if (target === 'all') {
-            // For global notifications, we can either:
-            // 1. Insert one record with is_global = true (Efficient, but tracking 'read' status per user is hard without a join table)
-            // 2. Insert individual records for ALL users (Heavy)
-
-            // For this "Popup Alert" requirement, usually a global record is best.
-            // But if we want persistent "Inbox", we need individual records OR a 'user_notifications_read' table.
-            // Let's go with creating ONE global notification for now for 'Popups', 
-            // OR if the user wants "Mass Notification" in the sense of emailing everyone, that's different.
-
-            // User Request: "Mass Notification System: Send popup alerts or emails to specific users or everyone."
-
-            // Let's implement Global Popup style for now as it's easier and lighter.
-            const { error } = await supabaseAdmin.from('notifications').insert({
+            console.log('🌍 [Notification API] Sending global notification');
+            const { error, data } = await supabaseAdmin.from('notifications').insert({
                 title,
                 message,
                 type: type || 'info',
                 is_global: true
-            });
-            if (error) throw error;
+            }).select();
+
+            if (error) {
+                console.error('❌ [Notification API] Insert error:', error);
+                throw error;
+            }
+            console.log('✅ [Notification API] Global notification inserted:', data);
 
         } else if (target === 'user' && userId) {
-            const { error } = await supabaseAdmin.from('notifications').insert({
+            console.log('👤 [Notification API] Sending user-specific notification to:', userId);
+            const { error, data } = await supabaseAdmin.from('notifications').insert({
                 user_id: userId,
                 title,
                 message,
                 type: type || 'info',
                 is_global: false
-            });
-            if (error) throw error;
+            }).select();
+
+            if (error) {
+                console.error('❌ [Notification API] Insert error:', error);
+                throw error;
+            }
+            console.log('✅ [Notification API] User notification inserted:', data);
         }
 
+        console.log('✅ [Notification API] Success');
         return NextResponse.json({ success: true });
 
     } catch (error: any) {
+        console.error('❌ [Notification API] Catch block error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

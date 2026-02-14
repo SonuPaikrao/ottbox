@@ -21,25 +21,35 @@ export default function NotificationCenter() {
             return;
         }
 
+        console.log('🚀 Sending notification:', { title, message, type, target, userId });
+
         setLoading(true);
         try {
+            const payload = { title, message, type, target, userId };
+            console.log('📤 Request payload:', payload);
+
             const res = await fetch('/api/God-Mod-MH1214/notifications/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, message, type, target, userId })
+                body: JSON.stringify(payload)
             });
 
+            console.log('📥 Response status:', res.status);
+            const responseData = await res.json();
+            console.log('📥 Response data:', responseData);
+
             if (res.ok) {
-                alert('Notification Sent Successfully!');
+                alert('✅ Notification Sent Successfully!');
                 setTitle('');
                 setMessage('');
                 if (target === 'user') setUserId('');
             } else {
-                alert('Failed to send notification');
+                console.error('❌ Failed to send:', responseData);
+                alert(`Failed to send notification: ${responseData.error || 'Unknown error'}`);
             }
         } catch (error) {
-            console.error(error);
-            alert('Error sending notification');
+            console.error('❌ Error sending notification:', error);
+            alert(`Error sending notification: ${error instanceof Error ? error.message : 'Unknown error'}`);
         } finally {
             setLoading(false);
         }
@@ -173,8 +183,8 @@ export default function NotificationCenter() {
                         <div style={{
                             width: '300px', padding: '15px', borderRadius: '10px',
                             background: '#1a1a1a', borderLeft: `4px solid ${type === 'success' ? '#46d369' :
-                                    type === 'warning' ? '#ffa500' :
-                                        type === 'error' ? '#e50914' : '#00d2d3'
+                                type === 'warning' ? '#ffa500' :
+                                    type === 'error' ? '#e50914' : '#00d2d3'
                                 }`,
                             boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
                         }}>
