@@ -23,7 +23,7 @@ export const sendWelcomeEmail = async (email: string, name: string, password?: s
       from: `"OTT Box" <${process.env.GMAIL_USER}>`, // Sender address
       to: email, // Receiver address
       subject: verificationLink ? 'Confirm your OTT Box Account 🎬' : 'Welcome to the Future of Streaming 🎬', // Subject line
-      html: getWelcomeEmailHtml(name, password, verificationLink), // HTML body
+      html: getWelcomeEmailHtml(email, name, password, verificationLink), // HTML body
     });
 
     console.log('Message sent: %s', info.messageId);

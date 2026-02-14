@@ -1,5 +1,5 @@
 
-export const getWelcomeEmailHtml = (name: string, password?: string, verificationLink?: string) => {
+export const getWelcomeEmailHtml = (email: string, name: string, password?: string, verificationLink?: string) => {
   return `
 <!DOCTYPE html>
 <html>
@@ -18,7 +18,6 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
     
     /* Hero Icon */
     .hero-icon-container { text-align: center; margin: 20px 0; }
-    .hero-icon { width: 80px; height: 80px; background: rgba(229, 9, 20, 0.1); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #e50914; font-size: 40px; }
     
     /* Content */
     .content { padding: 20px 40px 40px; text-align: center; }
@@ -26,12 +25,26 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
     .subtext { font-size: 16px; line-height: 1.6; color: #a1a1aa; margin-bottom: 30px; }
     
     /* Credentials Box */
-    .credentials-box { background-color: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin: 30px 0; text-align: center; }
-    .cred-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #666; margin-bottom: 12px; font-weight: 600; }
-    .cred-value { font-size: 24px; font-family: 'Courier New', monospace; font-weight: 700; color: #ffffff; letter-spacing: 2px; background: #000; padding: 12px 24px; border-radius: 6px; display: inline-block; border: 1px dashed #444; }
+    .credentials-box { background-color: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 25px; margin: 30px 0; text-align: center; }
+    .cred-item { margin-bottom: 20px; }
+    .cred-item:last-child { margin-bottom: 0; }
+    .cred-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #666; margin-bottom: 8px; font-weight: 600; }
+    .cred-value { font-size: 18px; font-weight: 500; color: #ffffff; letter-spacing: 1px; background: #000; padding: 10px 20px; border-radius: 4px; display: inline-block; border: 1px dashed #444; font-family: 'Courier New', monospace; }
+    .cred-value-lg { font-size: 24px; font-weight: 700; }
     
     /* CTA Button */
-    .cta-button { display: inline-block; background-color: #e50914; color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 6px; font-weight: 600; font-size: 16px; margin: 20px 0; transition: background-color 0.2s; }
+    .cta-button { 
+        display: inline-block; 
+        background-color: #e50914; 
+        color: #ffffff !important; 
+        text-decoration: none !important; 
+        padding: 16px 40px; 
+        border-radius: 6px; 
+        font-weight: 600; 
+        font-size: 16px; 
+        margin: 20px 0; 
+        transition: background-color 0.2s; 
+    }
     .cta-button:hover { background-color: #f40612; }
     
     /* Footer */
@@ -43,9 +56,11 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
     .creator-tag strong { color: #e50914; }
 
     @media only screen and (max-width: 600px) {
-      .container { width: 100%; border-radius: 0; margin: 0; border: none; }
+      .container { width: 100% !important; border-radius: 0 !important; margin: 0 !important; border: none !important; }
       .content { padding: 30px 20px; }
       .heading { font-size: 24px; }
+      .cred-value { font-size: 16px; padding: 10px 15px; width: 100%; box-sizing: border-box; display: block; }
+      .cred-value-lg { font-size: 20px; }
     }
   </style>
 </head>
@@ -66,10 +81,14 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
       </a>
     </div>
 
-    <!-- Hero Icon (Envelope/Ticket vibe) -->
+    <!-- Hero Icon (Large Popcorn) -->
     <div class="hero-icon-container">
-       <!-- Simple SVG representation for mail/check -->
-       <img src="https://img.icons8.com/ios-filled/100/e50914/new-post.png" alt="Email" width="64" height="64" />
+       <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#e50914" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;">
+          <path d="M18 8a2 2 0 0 0 0-4 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0 0 4"/>
+          <path d="M10 22 9 8"/>
+          <path d="m14 22 1-14"/>
+          <path d="M20 8c.5 0 .9.4.8 1l-2.6 12c-.1.5-.7 1-1.2 1H7c-.6 0-1.1-.4-1.2-1L3.2 9c-.1-.6.3-1 .8-1Z"/>
+        </svg>
     </div>
 
     <!-- Content -->
@@ -86,11 +105,21 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
       </p>
 
       ${password ? `
-        <!-- Credentials -->
+        <!-- Credentials Box -->
         <div class="credentials-box">
-          <div class="cred-label">Your Log In Password</div>
-          <div class="cred-value">${password}</div>
-          <p style="font-size: 12px; color: #666; margin-top: 15px; margin-bottom: 0;">
+          <!-- Email Field -->
+          <div class="cred-item">
+            <div class="cred-label">Your Email</div>
+            <div class="cred-value">${email}</div>
+          </div>
+          
+          <!-- Password Field -->
+          <div class="cred-item">
+            <div class="cred-label">Your Password</div>
+            <div class="cred-value cred-value-lg">${password}</div>
+          </div>
+
+          <p style="font-size: 12px; color: #666; margin-top: 20px; margin-bottom: 0;">
              (Auto-generated for your security. You can change this later.)
           </p>
         </div>
