@@ -6,7 +6,7 @@ import { createBrowserClient } from '@supabase/ssr';
 import { Lock, Mail, Key } from 'lucide-react';
 
 export default function AdminLogin() {
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState('paikraov58@gmail.com');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -30,11 +30,11 @@ export default function AdminLogin() {
             });
 
             if (authError || !user) {
-                throw new Error('Invalid credentials');
+                console.error('Auth Error:', authError);
+                throw new Error('Invalid email or password.');
             }
 
             // 2. Check Authorization (God Mode Check)
-            // Query public table 'admins' to see if this email is allowed
             const { data: adminRecord, error: adminError } = await supabase
                 .from('admins')
                 .select('email')
@@ -42,12 +42,11 @@ export default function AdminLogin() {
                 .single();
 
             if (adminError || !adminRecord) {
-                // Not an admin! Log them out immediately.
                 await supabase.auth.signOut();
-                throw new Error('Access Denied: You are not authorized as an Admin.');
+                throw new Error('Access Denied: Not in Admin Whitelist.');
             }
 
-            // 3. Success -> Redirect to Dashboard
+            // 3. Success
             router.push('/admin');
             router.refresh();
 
@@ -84,8 +83,8 @@ export default function AdminLogin() {
                     }}>
                         <Lock size={30} color="white" />
                     </div>
-                    <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>Admin Access</h1>
-                    <p style={{ color: '#888' }}>Secure Login for God Mode</p>
+                    <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>God Mode</h1>
+                    <p style={{ color: '#888' }}>Restricted Access Only</p>
                 </div>
 
                 {error && (
@@ -112,7 +111,6 @@ export default function AdminLogin() {
                                     background: '#222', border: '1px solid #444', borderRadius: '6px',
                                     color: 'white', fontSize: '1rem', outline: 'none'
                                 }}
-                                placeholder="admin@ott.com"
                             />
                         </div>
                     </div>
@@ -147,7 +145,7 @@ export default function AdminLogin() {
                             transition: 'background 0.2s'
                         }}
                     >
-                        {loading ? 'Authenticating...' : 'Enter God Mode'}
+                        {loading ? 'Verifying...' : 'Access Admin Panel'}
                     </button>
                 </form>
             </div>

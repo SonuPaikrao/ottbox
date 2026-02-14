@@ -56,11 +56,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }, [user, loading, router, pathname]);
 
     if (loading || !isAuthorized) {
-        return (/* ... loading state */
+        return (
             <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', color: '#e50914' }}>
                 <h2>Verifying Admin Access...</h2>
             </div>
         );
+    }
+
+    // Special Layout for Login Page (No Sidebar, Full Screen)
+    if (pathname === '/admin/login') {
+        return <>{children}</>;
     }
 
     return (
