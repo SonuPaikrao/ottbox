@@ -9,79 +9,111 @@ export const getWelcomeEmailHtml = (name: string, password?: string, verificatio
   <title>Welcome to OTT Box</title>
   <style>
     body { margin: 0; padding: 0; background-color: #000000; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff; }
-    .container { max-width: 600px; margin: 0 auto; background-color: #141414; overflow: hidden; }
-    .header { padding: 40px 20px; text-align: center; background: linear-gradient(180deg, rgba(229,9,20,0.1) 0%, rgba(20,20,20,0) 100%); border-bottom: 1px solid #333; }
-    .logo { display: block; margin: 0 auto; max-width: 150px; height: auto; }
-    .content { padding: 40px 30px; }
-    .greeting { font-size: 24px; font-weight: 700; margin-bottom: 20px; color: #ffffff; }
-    .text { font-size: 16px; line-height: 1.6; color: #cccccc; margin-bottom: 20px; }
-    .credentials-box { background-color: #1f1f1f; border: 1px solid #333; border-radius: 8px; padding: 25px; margin: 30px 0; text-align: center; }
-    .cred-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 10px; }
-    .cred-value { font-size: 24px; font-family: monospace; font-weight: 700; color: #ffffff; letter-spacing: 2px; background: #000; padding: 10px 20px; border-radius: 4px; display: inline-block; border: 1px dashed #444; }
-    .cta-button { display: block; width: 100%; max-width: 280px; margin: 40px auto 0; background-color: #e50914; color: #ffffff; text-align: center; padding: 18px 0; border-radius: 4px; font-weight: 700; font-size: 16px; text-decoration: none; transition: background-color 0.3s; text-transform: uppercase; letter-spacing: 0.5px; }
-    .footer { padding: 30px 20px; text-align: center; font-size: 12px; color: #666666; border-top: 1px solid #222; background-color: #0a0a0a; }
-    .social-links { margin-bottom: 15px; }
-    .social-link { color: #999; text-decoration: none; margin: 0 10px; }
+    .container { max-width: 600px; margin: 40px auto; background-color: #141414; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border: 1px solid #222; }
     
+    /* Header */
+    .header { padding: 40px 0 20px; text-align: center; }
+    .logo { width: 48px; height: 48px; border-radius: 8px; margin-bottom: 10px; }
+    .brand-name { font-size: 24px; font-weight: 800; color: #e50914; margin: 0; letter-spacing: -0.5px; }
+    
+    /* Hero Icon */
+    .hero-icon-container { text-align: center; margin: 20px 0; }
+    .hero-icon { width: 80px; height: 80px; background: rgba(229, 9, 20, 0.1); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #e50914; font-size: 40px; }
+    
+    /* Content */
+    .content { padding: 20px 40px 40px; text-align: center; }
+    .heading { font-size: 28px; font-weight: 700; margin-bottom: 15px; color: #ffffff; letter-spacing: -0.5px; }
+    .subtext { font-size: 16px; line-height: 1.6; color: #a1a1aa; margin-bottom: 30px; }
+    
+    /* Credentials Box */
+    .credentials-box { background-color: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin: 30px 0; text-align: center; }
+    .cred-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #666; margin-bottom: 12px; font-weight: 600; }
+    .cred-value { font-size: 24px; font-family: 'Courier New', monospace; font-weight: 700; color: #ffffff; letter-spacing: 2px; background: #000; padding: 12px 24px; border-radius: 6px; display: inline-block; border: 1px dashed #444; }
+    
+    /* CTA Button */
+    .cta-button { display: inline-block; background-color: #e50914; color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 6px; font-weight: 600; font-size: 16px; margin: 20px 0; transition: background-color 0.2s; }
+    .cta-button:hover { background-color: #f40612; }
+    
+    /* Footer */
+    .footer { background-color: #0a0a0a; padding: 30px 20px; text-align: center; border-top: 1px solid #222; }
+    .social-links { margin-bottom: 20px; }
+    .social-icon { display: inline-block; margin: 0 10px; color: #666; text-decoration: none; font-size: 14px; }
+    .copyright { color: #52525b; font-size: 12px; margin-bottom: 10px; }
+    .creator-tag { color: #71717a; font-size: 12px; }
+    .creator-tag strong { color: #e50914; }
+
     @media only screen and (max-width: 600px) {
+      .container { width: 100%; border-radius: 0; margin: 0; border: none; }
       .content { padding: 30px 20px; }
-      .greeting { font-size: 20px; }
+      .heading { font-size: 24px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Header with Logo -->
+    
+    <!-- Header -->
     <div class="header">
       <a href="${process.env.NEXT_PUBLIC_SITE_URL}" style="text-decoration: none;">
-        <!-- Using absolute path for logo -->
-        <img src="https://ott-box-weld.vercel.app/logo.svg" alt="OTT BOX" class="logo" width="40" height="40" style="width: 40px; height: 40px;" />
-        <div style="color: #e50914; font-size: 24px; font-weight: 800; letter-spacing: -1px; margin-top: 10px;">OTT BOX</div>
+        <img src="${process.env.NEXT_PUBLIC_SITE_URL}/logo.svg" alt="Logo" class="logo" />
+        <h1 class="brand-name">OTT BOX</h1>
       </a>
     </div>
 
-    <!-- Main Content -->
+    <!-- Hero Icon (Envelope/Ticket vibe) -->
+    <div class="hero-icon-container">
+       <!-- Simple SVG representation for mail/check -->
+       <img src="https://img.icons8.com/ios-filled/100/e50914/new-post.png" alt="Email" width="64" height="64" />
+    </div>
+
+    <!-- Content -->
     <div class="content">
-      <h1 class="greeting">Welcome to the Club, ${name}.</h1>
+      <h1 class="heading">
+        ${verificationLink ? 'Confirm Your Account' : 'Welcome Aboard!'}
+      </h1>
       
-      <p class="text">
+      <p class="subtext">
         ${verificationLink
-      ? "You're just one step away from unlimited entertainment. Please confirm your account below."
-      : "Your journey into unlimited entertainment starts here. We've curated the best movies and series just for you."
+      ? `Hi <strong>${name}</strong>,<br/>You're one click away from unlimited entertainment. Please verify your email to get started.`
+      : `Hi <strong>${name}</strong>,<br/>Your account is all set. We've curated the best movies and shows just for you.`
     }
       </p>
 
       ${password ? `
-        <!-- Credentials Section -->
+        <!-- Credentials -->
         <div class="credentials-box">
-          <div class="cred-label">Your Account Credentials</div>
+          <div class="cred-label">Your Log In Password</div>
           <div class="cred-value">${password}</div>
           <p style="font-size: 12px; color: #666; margin-top: 15px; margin-bottom: 0;">
-             Keep this safe. You can use this to login to your OTT Box account.
+             (Auto-generated for your security. You can change this later.)
           </p>
         </div>
       ` : ''}
 
-      <p class="text">
-        Sit back, relax, and start streaming in high quality. No ads, just pure cinematic experience.
-      </p>
-
-      <!-- CTA Button -->
+      <!-- CTA -->
       <a href="${verificationLink || process.env.NEXT_PUBLIC_SITE_URL}" class="cta-button">
-        ${verificationLink ? 'Confirm Account' : 'Start Watching Now'}
+        ${verificationLink ? 'Verify Email Address' : 'Start Watching Now'}
       </a>
+      
+      <p style="font-size: 12px; color: #52525b; margin-top: 30px;">
+        If you didn't request this, please ignore this email.
+      </p>
     </div>
 
     <!-- Footer -->
     <div class="footer">
       <div class="social-links">
-        <a href="https://instagram.com" class="social-link">Instagram</a> • 
-        <a href="https://twitter.com" class="social-link">Twitter</a> • 
-        <a href="https://github.com/SonuPaikrao" class="social-link">Github</a>
+        <a href="https://github.com/SonuPaikrao" class="social-icon">GitHub</a>
+        <a href="#" class="social-icon">Twitter</a>
+        <a href="#" class="social-icon">Instagram</a>
       </div>
-      <p>&copy; ${new Date().getFullYear()} OTT Box. All rights reserved.</p>
-      <p style="margin-top: 10px; font-size: 12px; color: #888;">
-        Made with ❤️ & ☕ by <strong style="color: #ccc;">Sonu Rao</strong>
+      
+      <p class="copyright">
+        &copy; ${new Date().getFullYear()} OTT Box. All rights reserved.
+      </p>
+      
+      <p class="creator-tag">
+        Made with ❤️ & ☕ by <strong>Sonu Rao</strong>
       </p>
     </div>
   </div>
