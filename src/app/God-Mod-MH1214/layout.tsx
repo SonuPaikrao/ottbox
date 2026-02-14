@@ -1,5 +1,6 @@
 'use client';
 
+import './admin.css';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -100,7 +101,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {children}
             </main>
 
-            import './admin.css';
         </div>
     );
 }

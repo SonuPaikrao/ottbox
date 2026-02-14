@@ -18,7 +18,8 @@
     "nodemailer": "^8.0.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-intersection-observer": "^10.0.2"
+    "react-intersection-observer": "^10.0.2",
+    "recharts": "^3.7.0"
   },
   "devDependencies": {
     "@types/node": "^20",
