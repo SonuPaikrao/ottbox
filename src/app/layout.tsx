@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google"; // Use google font
 import "./globals.css";
-import Navbar from "@/components/Navbar/Navbar";
-import MobileNav from "@/components/Navbar/MobileNav";
+import "./globals.css";
+// Navbar and MobileNav moved to AppShell
 import { AuthProvider } from "@/context/AuthContext";
 import { ToastProvider } from "@/context/ToastContext";
 import { WatchlistProvider } from "@/context/WatchlistContext";
@@ -54,7 +54,7 @@ export const viewport = {
 
 import InstallPrompt from "@/components/Shared/InstallPrompt";
 import SplashScreen from "@/components/Shared/SplashScreen";
-import Footer from "@/components/Shared/Footer";
+import AppShell from "@/components/Shared/AppShell";
 
 export default function RootLayout({
   children,
@@ -68,14 +68,13 @@ export default function RootLayout({
           <WatchlistProvider>
             <ToastProvider>
               <HistoryProvider>
-                <Navbar />
-                <main style={{ minHeight: '100vh' }}>
-                  {children}
-                </main>
-                <Footer />
-                <InstallPrompt />
-                <MobileNav />
-                <SplashScreen />
+                <HistoryProvider>
+                  <AppShell>
+                    {children}
+                  </AppShell>
+                  <InstallPrompt />
+                  <SplashScreen />
+                </HistoryProvider>
               </HistoryProvider>
             </ToastProvider>
           </WatchlistProvider>

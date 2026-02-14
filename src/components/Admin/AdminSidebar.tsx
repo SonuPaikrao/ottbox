@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, BarChart2, LogOut } from 'lucide-react';
+import { Home, Users, BarChart2, LogOut, X } from 'lucide-react';
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
     const pathname = usePathname();
 
     const links = [
@@ -25,8 +25,11 @@ export default function AdminSidebar() {
             left: 0,
             top: 0
         }}>
-            <div style={{ marginBottom: '40px', padding: '0 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ marginBottom: '40px', padding: '0 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
                 <span style={{ color: '#e50914', fontSize: '1.5rem', fontWeight: 800 }}>OTT ADMIN</span>
+                <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#888' }} className="d-md-none">
+                    <X size={24} />
+                </button>
             </div>
 
             <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '5px' }}>

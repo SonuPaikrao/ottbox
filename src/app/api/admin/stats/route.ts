@@ -32,9 +32,11 @@ export async function GET(req: NextRequest) {
         }
 
         // 2. Fetch Stats
-        // Total Users: Query 'profiles' table for count
+        // Total Users: Query 'auth.users' table directly using Service Role
+        // We use .schema('auth') to access the protected schema
         const { count: userCount, error: userError } = await supabaseAdmin
-            .from('profiles') // Assuming 'profiles' table exists and mirrors users
+            .schema('auth')
+            .from('users')
             .select('*', { count: 'exact', head: true });
 
         if (userError) {
