@@ -34,17 +34,19 @@ export async function GET(req: NextRequest) {
         // 2. Fetch Stats
         console.log('Admin Stats API: Fetching data...');
 
-        // Total Users: Query 'auth.users' table directly using Service Role
-        // We use .schema('auth') to access the protected schema
-        const { count: userCount, error: userError } = await supabaseAdmin
-            .schema('auth')
-            .from('users')
-            .select('*', { count: 'exact', head: true });
+        // Total Users: Use listUsers() to get the total count
+        const { data, error: userError } = await supabaseAdmin.auth.admin.listUsers({
+            page: 1,
+            perPage: 1
+        });
 
+        let userCount = 0;
         if (userError) {
             console.error('Stats Error (Users):', userError);
         } else {
-            console.log('Stats Check: User Count =', userCount);
+            // TypeScript doesn't always see 'total' in the union type, so we cast to any or check
+            userCount = (data as any).total || 0;
+            console.log('Stats Check: User Count (from listUsers) =', userCount);
         }
 
         // Watchlist Count: Query the table directly
