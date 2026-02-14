@@ -7,6 +7,7 @@ import DeviceChart from '@/components/Admin/Charts/PieChart';
 import MapChart from '@/components/Admin/Charts/MapChart';
 import ServerMetrics from '@/components/Admin/Charts/ServerMetrics';
 import NotificationCenter from '@/components/Admin/NotificationCenter';
+import ActiveSessionsWidget from '@/components/Admin/ActiveSessionsWidget';
 
 export default function GodModeDashboard() {
     const [stats, setStats] = useState({
@@ -159,6 +160,11 @@ export default function GodModeDashboard() {
                         </span>
                     </div>
                     <ServerMetrics />
+                </div>
+
+                {/* Active Sessions Widget */}
+                <div style={{ gridColumn: '1 / -1' }}>
+                    <ActiveSessionsWidget />
                 </div>
 
                 {/* Notification Center */}
