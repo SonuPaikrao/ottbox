@@ -12,7 +12,13 @@ export async function POST(req: NextRequest) {
         }
 
         // 1. Check if we already sent the welcome email (idempotency)
+        if (!supabaseAdmin) {
+            console.error('Supabase Admin client is not initialized. Check server env vars.');
+            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+        }
+
         const { data: { user }, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
+
 
         if (userError || !user) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
