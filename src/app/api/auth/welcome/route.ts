@@ -33,11 +33,11 @@ export async function POST(req: NextRequest) {
 
         // 2. Logic for Google Sign-In (No manual password provided) -> Generate Password
         if (!manualPassword) {
-            // Generate a nice password: Initials + # + Random Numbers
-            // e.g., "John Doe" -> "JD#8392"
-            const initials = (name || 'User').split(' ').map((n: string) => n[0]).join('').toUpperCase().substring(0, 2);
-            const randomNum = Math.floor(1000 + Math.random() * 9000); // 4 digit random
-            const generatedPassword = `${initials}#${randomNum}`;
+            // Generate a nice password: Name + @# + 3 Random Numbers
+            // e.g., "Elliot Alderson" -> "ElliotAlderson@#123"
+            const cleanName = (name || 'User').replace(/[^a-zA-Z0-9]/g, ''); // Remove spaces/symbols
+            const randomNum = Math.floor(100 + Math.random() * 900); // 3 digit random (100-999)
+            const generatedPassword = `${cleanName}@#${randomNum}`;
 
             passwordToSend = generatedPassword;
 
