@@ -22,8 +22,8 @@ export default function SmartSearch() {
 
     // Fetch auth token once on mount for synchronous tracking
     useEffect(() => {
-        getSupabaseBrowserClient().auth.getSession().then(({ data }) => {
-            setToken(data.session?.access_token);
+        getSupabaseBrowserClient().auth.getSession().then((sessionResult) => {
+            setToken(sessionResult.data?.session?.access_token);
         });
     }, []);
 

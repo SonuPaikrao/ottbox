@@ -22,8 +22,8 @@ export default function ViewTracker({ contentId, contentTitle, contentType, post
     const tokenRef = useRef<string | undefined>();
 
     useEffect(() => {
-        getSupabaseBrowserClient().auth.getSession().then(({ data }) => {
-            tokenRef.current = data.session?.access_token;
+        getSupabaseBrowserClient().auth.getSession().then((sessionResult) => {
+            tokenRef.current = sessionResult.data?.session?.access_token;
         });
     }, []);
 
