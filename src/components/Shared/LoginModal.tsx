@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { X, Mail } from 'lucide-react';
+import { X, Mail, QrCode } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import { supabase } from '@/lib/supabase';
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -15,18 +17,22 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     const { signInWithGoogle, signInWithEmail, signInWithMagicLink, signUpWithEmail } = useAuth();
     const [loading, setLoading] = useState(false);
 
-    // 'signin' or 'signup' or 'magiclink' or 'success'
-    const [mode, setMode] = useState<'signin' | 'signup' | 'magiclink' | 'success'>('signin');
+    // 'signin' | 'signup' | 'magiclink' | 'qr' | 'success'
+    const [mode, setMode] = useState<'signin' | 'signup' | 'magiclink' | 'qr' | 'success'>('signin');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null>(null);
+    const [qrSessionId, setQrSessionId] = useState<string>('');
+    const [qrExpired, setQrExpired] = useState(false);
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    const qrUrl = qrSessionId ? `${siteUrl}/qr?code=${qrSessionId}` : '';
 
     // Prevent background scrolling when modal is open
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
-            document.documentElement.style.overflow = 'hidden'; // Also lock html
+            document.documentElement.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
@@ -36,6 +42,39 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             document.documentElement.style.overflow = '';
         };
     }, [isOpen]);
+
+    // Generate QR session & listen for approval when in QR mode
+    useEffect(() => {
+        if (mode !== 'qr') return;
+
+        // Create unique session ID and set 5-min expiry
+        const sessionId = crypto.randomUUID();
+        setQrSessionId(sessionId);
+        setQrExpired(false);
+
+        // Subscribe to the realtime channel for this session
+        const channel = supabase
+            .channel(`qr-login:${sessionId}`)
+            .on('broadcast', { event: 'approved' }, (payload: any) => {
+                // Desktop received the magic link — navigate to it
+                const { action_link } = payload.payload;
+                if (action_link) {
+                    window.location.href = action_link;
+                }
+            })
+            .subscribe();
+
+        // QR Code expires after 5 minutes for security
+        const timer = setTimeout(() => {
+            setQrExpired(true);
+            supabase.removeChannel(channel);
+        }, 5 * 60 * 1000);
+
+        return () => {
+            clearTimeout(timer);
+            supabase.removeChannel(channel);
+        };
+    }, [mode]);
 
     if (!isOpen) return null;
 
@@ -152,7 +191,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 ) : (
                     <>
                         <h2 style={{ fontSize: '2rem', marginBottom: '20px', fontWeight: 700 }}>
-                            {mode === 'signin' ? 'Welcome Back' : mode === 'magiclink' ? 'Magic Link Login' : 'Join OTT Box'}
+                            {mode === 'signin' ? 'Welcome Back' : mode === 'magiclink' ? 'Magic Link Login' : mode === 'qr' ? 'QR Code Login' : 'Join OTT Box'}
                         </h2>
 
                         {/* Main Action: Google */}
@@ -223,7 +262,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         </form>
 
                         {/* Magic Link Toggle */}
-                        {mode !== 'magiclink' && (
+                        {mode !== 'magiclink' && mode !== 'qr' && (
                             <button
                                 type="button"
                                 onClick={() => { setMode('magiclink'); setError(null); setMessage(null); }}
@@ -237,8 +276,53 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             </button>
                         )}
 
+                        {/* QR Code Login Toggle — only for sign in */}
+                        {mode === 'signin' && (
+                            <button
+                                type="button"
+                                onClick={() => { setMode('qr'); setError(null); setMessage(null); }}
+                                style={{
+                                    background: 'none', border: '1px solid #444', color: '#ccc',
+                                    padding: '10px', width: '100%', borderRadius: '4px', cursor: 'pointer',
+                                    marginTop: '10px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                                }}
+                            >
+                                <QrCode size={16} /> Sign in via QR Code
+                            </button>
+                        )}
+
+                        {/* QR Code Display */}
+                        {mode === 'qr' && (
+                            <div style={{ marginTop: '10px' }}>
+                                {qrExpired ? (
+                                    <div style={{ padding: '20px', textAlign: 'center' }}>
+                                        <p style={{ color: '#e50914', marginBottom: '12px' }}>⏱ QR Code expired.</p>
+                                        <button
+                                            onClick={() => setMode('qr')}
+                                            style={{ background: '#333', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer' }}
+                                        >
+                                            Generate New QR
+                                        </button>
+                                    </div>
+                                ) : qrUrl ? (
+                                    <>
+                                        <div style={{
+                                            background: 'white', padding: '16px', borderRadius: '12px',
+                                            display: 'inline-block', margin: '0 auto'
+                                        }}>
+                                            <QRCodeSVG value={qrUrl} size={180} level="H" />
+                                        </div>
+                                        <p style={{ color: '#a1a1aa', fontSize: '13px', marginTop: '14px', lineHeight: 1.6 }}>
+                                            📱 Open this on your <strong style={{ color: '#fff' }}>already logged-in phone</strong> and approve the login.
+                                        </p>
+                                        <p style={{ color: '#52525b', fontSize: '11px', marginTop: '6px' }}>Expires in 5 minutes</p>
+                                    </>
+                                ) : null}
+                            </div>
+                        )}
+
                         <p style={{ marginTop: '20px', color: '#999', fontSize: '0.9rem' }}>
-                            {mode === 'signin' ? 'New to OTT Box?' : mode === 'magiclink' ? 'Remember your password?' : 'Already have an account?'}
+                            {mode === 'signin' ? 'New to OTT Box?' : mode === 'magiclink' ? 'Remember your password?' : mode === 'qr' ? 'Use email instead?' : 'Already have an account?'}
                             <span
                                 onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(null); setMessage(null); }}
                                 style={{ color: 'white', marginLeft: '5px', cursor: 'pointer', textDecoration: 'underline' }}

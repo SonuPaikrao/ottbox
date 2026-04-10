@@ -18,6 +18,7 @@
     "next": "^16.1.6",
     "next-pwa": "^5.6.0",
     "nodemailer": "^8.0.1",
+    "qrcode.react": "^4.2.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-intersection-observer": "^10.0.2",
