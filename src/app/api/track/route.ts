@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
+
+// Separate admin client for inserts (bypasses RLS)
+const adminClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 // POST /api/track
 // Body: { events: Event[] }
@@ -14,10 +21,11 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ ok: false });
         }
 
+        // ✅ Use ANON KEY to properly read session cookies and verify user
         const cookieStore = await cookies();
         const supabase = createServerClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.SUPABASE_SERVICE_ROLE_KEY!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,  // ← FIXED: was SERVICE_ROLE_KEY
             { cookies: { get: (n) => cookieStore.get(n)?.value } }
         );
 
@@ -36,10 +44,16 @@ export async function POST(req: NextRequest) {
             metadata: e.metadata || {},
         }));
 
-        await supabase.from('user_events').insert(rows);
+        // ✅ Use service role admin client for insert (bypasses RLS)
+        const { error } = await adminClient.from('user_events').insert(rows);
+        if (error) {
+            console.error('[track] insert error:', error.message);
+            return NextResponse.json({ ok: false, error: error.message });
+        }
 
         return NextResponse.json({ ok: true, tracked: rows.length });
-    } catch {
+    } catch (err: any) {
+        console.error('[track] error:', err?.message);
         return NextResponse.json({ ok: false });
     }
 }
