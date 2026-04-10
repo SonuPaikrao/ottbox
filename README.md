@@ -101,13 +101,11 @@
 
 Our architecture is designed to handle real-time concurrency, secure authentication, and edge-deployed frontend delivery.
 
-<div align="center">
-  <img src="./public/System_Architecture_Map.png" alt="System Architecture Map" width="100%" style="border-radius: 12px; margin-bottom: 20px;">
-  <br>
-  <img src="./public/System_Connectivity_Map.png" alt="System Connectivity Map" width="100%" style="border-radius: 12px;">
-</div>
-
 ### **System_Architecture_Map — Executive Overview**
+
+<div align="center">
+  <img src="./public/System_Architecture_Map.png" alt="System Architecture Map" width="100%" style="border-radius: 12px;">
+</div>
 
 This diagram presents the platform at an architectural level, focused on service responsibilities and runtime boundaries:
 
@@ -118,6 +116,10 @@ This diagram presents the platform at an architectural level, focused on service
 - **External provider integration**: TMDB powers metadata discovery, YouTube powers trailer/media surfaces, and SMTP/Nodemailer handles transactional communication.
 
 ### **System_Connectivity_Map — Operational Flow Overview**
+
+<div align="center">
+  <img src="./public/System_Connectivity_Map.png" alt="System Connectivity Map" width="100%" style="border-radius: 12px;">
+</div>
 
 This diagram explains how requests, auth events, and realtime signals move across layers in production:
 
