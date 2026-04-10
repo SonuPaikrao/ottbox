@@ -162,3 +162,113 @@ export const getWelcomeEmailHtml = (email: string, name: string, password?: stri
 </html>
     `;
 };
+
+export const getMagicLinkEmailHtml = (email: string, magicLink: string) => {
+    return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in to OTT Box</title>
+    <style>
+      body { margin: 0; padding: 0; background-color: #000000; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff; }
+      .container { max-width: 600px; margin: 40px auto; background-color: #141414; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border: 1px solid #222; }
+      
+      /* Header */
+      .header { padding: 40px 0 20px; text-align: center; }
+      .logo { width: 48px; height: 48px; border-radius: 8px; margin-bottom: 10px; }
+      .brand-name { font-size: 24px; font-weight: 800; color: #e50914; margin: 0; letter-spacing: -0.5px; }
+      
+      /* Hero Icon */
+      .hero-icon-container { text-align: center; margin: 20px 0; display: flex; justify-content: center; }
+      
+      /* Content */
+      .content { padding: 20px 40px 40px; text-align: center; }
+      .heading { font-size: 28px; font-weight: 700; margin-bottom: 15px; color: #ffffff; letter-spacing: -0.5px; }
+      .subtext { font-size: 16px; line-height: 1.6; color: #a1a1aa; margin-bottom: 30px; }
+      
+      /* CTA Button */
+      .cta-button { 
+          display: inline-block; 
+          background-color: #e50914; 
+          color: #ffffff !important; 
+          text-decoration: none !important; 
+          padding: 16px 40px; 
+          border-radius: 6px; 
+          font-weight: 600; 
+          font-size: 16px; 
+          margin: 20px 0; 
+          transition: background-color 0.2s; 
+          box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+      }
+      .cta-button:hover { background-color: #f40612; }
+      
+      /* Footer */
+      .footer { background-color: #0a0a0a; padding: 30px 20px; text-align: center; border-top: 1px solid #222; }
+      .copyright { color: #52525b; font-size: 12px; margin-bottom: 10px; }
+      .creator-tag { color: #71717a; font-size: 12px; }
+      .creator-tag strong { color: #e50914; }
+  
+      @media only screen and (max-width: 600px) {
+        .container { width: 100% !important; border-radius: 0 !important; margin: 0 !important; border: none !important; }
+        .content { padding: 30px 20px; }
+        .heading { font-size: 24px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL}" style="text-decoration: none; display: inline-block;">
+          <!-- Embedded SVG Logo -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e50914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto;">
+              <path d="M18 8a2 2 0 0 0 0-4 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0 0 4"></path>
+              <path d="M10 22 9 8"></path>
+              <path d="m14 22 1-14"></path>
+              <path d="M20 8c.5 0 .9.4.8 1l-2.6 12c-.1.5-.7 1-1.2 1H7c-.6 0-1.1-.4-1.2-1L3.2 9c-.1-.6.3-1 .8-1Z"></path>
+          </svg>
+          <h1 class="brand-name" style="margin-top: 10px;">OTT BOX</h1>
+        </a>
+      </div>
+  
+      <!-- Hero Icon (Magic Link) -->
+      <div class="hero-icon-container">
+          <div style="background: rgba(229, 9, 20, 0.1); padding: 20px; border-radius: 50%;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#e50914" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              </svg>
+          </div>
+      </div>
+  
+      <!-- Content -->
+      <div class="content">
+        <h1 class="heading">Secure Login Link</h1>
+        
+        <p class="subtext">
+          Hi there,<br/>You requested a Magic Link to sign in to OTT Box with <strong>${email}</strong>.<br/>Click the secure button below to instantly log in.
+        </p>
+  
+        <!-- CTA -->
+        <a href="${magicLink}" class="cta-button">
+          Sign In Automatically
+        </a>
+        
+        <p style="font-size: 12px; color: #52525b; margin-top: 30px; border-top: 1px solid #222; padding-top: 20px;">
+          This link is valid for a short time and can only be used once.<br/>If you didn't request this, please ignore this email.
+        </p>
+      </div>
+  
+      <!-- Footer -->
+      <div class="footer">
+        <p class="copyright">
+          &copy; ${new Date().getFullYear()} OTT Box. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </body>
+  </html>
+    `;
+  };

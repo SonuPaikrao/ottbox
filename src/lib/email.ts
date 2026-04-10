@@ -1,6 +1,6 @@
 
 import nodemailer from 'nodemailer';
-import { getWelcomeEmailHtml } from './email-templates';
+import { getWelcomeEmailHtml, getMagicLinkEmailHtml } from './email-templates';
 
 // Create a transporter using Gmail SMTP
 const transporter = nodemailer.createTransport({
@@ -30,6 +30,28 @@ export const sendWelcomeEmail = async (email: string, name: string, password?: s
     return { success: true, data: info };
   } catch (error) {
     console.error('Email sending failed:', error);
+    return { success: false, error };
+  }
+};
+
+export const sendMagicLinkEmail = async (email: string, magicLink: string) => {
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    console.warn('Missing GMAIL_USER or GMAIL_APP_PASSWORD. Email will not be sent.');
+    return { success: false, error: 'Server configuration error: Missing Gmail credentials' };
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"OTT Box" <${process.env.GMAIL_USER}>`,
+      to: email,
+      subject: 'Your Secure Login Link 🎬',
+      html: getMagicLinkEmailHtml(email, magicLink),
+    });
+
+    console.log('Magic link email sent: %s', info.messageId);
+    return { success: true, data: info };
+  } catch (error) {
+    console.error('Magic link email sending failed:', error);
     return { success: false, error };
   }
 };

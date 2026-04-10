@@ -86,13 +86,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const signInWithMagicLink = async (email: string) => {
-        return await supabase.auth.signInWithOtp({
-            email,
-            options: {
-                shouldCreateUser: true,
-                emailRedirectTo: `${window.location.origin}/auth/callback`,
-            },
+        const res = await fetch('/api/auth/magiclink', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
         });
+        
+        const data = await res.json();
+        if (!res.ok) {
+            return { error: new Error(data.error || 'Failed to send magic link') };
+        }
+        return { data, error: null };
     };
 
     const signUpWithEmail = async (email: string, pass: string) => {
