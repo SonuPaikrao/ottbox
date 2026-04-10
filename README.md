@@ -107,6 +107,26 @@ Our architecture is designed to handle real-time concurrency, secure authenticat
   <img src="./public/System_Connectivity_Map.png" alt="System Connectivity Map" width="100%" style="border-radius: 12px;">
 </div>
 
+### **System_Architecture_Map — Executive Overview**
+
+This diagram presents the platform at an architectural level, focused on service responsibilities and runtime boundaries:
+
+- **Edge-first frontend delivery**: Next.js 16 SSR/RSC is deployed on Vercel Edge for low-latency global rendering, static asset optimization, and CDN-assisted distribution.
+- **Client intelligence at the edge**: Desktop browser and PWA/mobile clients maintain local capabilities (service worker, cache, playback state) to reduce round trips and improve UX continuity.
+- **Real-time trust path**: Zero-click QR login bridges desktop and mobile through Supabase Auth + Realtime channels, enabling secure cross-device session initiation.
+- **Core data domains**: User profiles, watchlist state, playback tracking, and search analytics are modeled as first-class backend domains for personalization and observability.
+- **External provider integration**: TMDB powers metadata discovery, YouTube powers trailer/media surfaces, and SMTP/Nodemailer handles transactional communication.
+
+### **System_Connectivity_Map — Operational Flow Overview**
+
+This diagram explains how requests, auth events, and realtime signals move across layers in production:
+
+- **Layered topology**: Client Edge -> Delivery (Vercel CDN) -> Application (Next.js App Router + API routes) -> Backend (Supabase services).
+- **Zero-click auth choreography**: Desktop generates QR token, mobile scans and authenticates, backend validates and publishes session state, desktop completes login without manual credential entry.
+- **API surface separation**: Dedicated routes for auth, analytics tracking, notifications/email, and search/view logging isolate concerns and simplify scaling.
+- **Data and event pipelines**: Realtime streams handle instant state updates while relational tables persist durable entities like users, watchlist, and search logs.
+- **Media + metadata routing**: Catalog intelligence (TMDB) and trailer delivery (YouTube) are integrated as upstream systems behind the application layer.
+
 ---
 
 ## 📦 **Installation & Setup**
@@ -194,34 +214,44 @@ When deploying to Vercel:
 ## 📁 **Project Structure**
 
 ```
-ott-box/
-├── 📁 public/
-│   ├── 🖼️ logo.png              # Brand Logo
-│   ├── 🎬 banner.png             # Hero Banner
-│   └── 📄 manifest.json          # PWA Configuration
+ottbox/
+├── 📁 public/                    # Static assets, PWA files, architecture maps
+│   ├── 🗺️ System_Architecture_Map.png
+│   ├── 🗺️ System_Connectivity_Map.png
+│   ├── 🎬 ott-banner.png
+│   ├── 📄 manifest.json
+│   ├── ⚙️ sw.js / workbox-*.js
+│   └── 🎨 icons/, svg/jpg/png assets
 ├── 📁 src/
-│   ├── 📁 app/                   # Next.js App Router
-│   │   ├── 🏠 page.tsx           # Home Dashboard
-│   │   ├── 🎬 movies/            # Movies Browsing
-│   │   ├── 📺 series/            # TV Series
-│   │   ├── 🔍 search/            # Search Page
-│   │   ├── 🎥 watch/             # Video Player
-│   │   ├── 📖 title/             # Content Details
-│   │   └── 🎨 globals.css        # Global Styles
-│   ├── 📁 components/            # Reusable Components
-│   │   ├── 🧭 Header/            # Navigation Bar
-│   │   ├── 🎬 Home/              # Home Components
-│   │   │   ├── HeroSection.tsx   # Auto-playing hero
-│   │   │   └── ContentRow.tsx    # Scrollable content rows
-│   │   ├── 🎞️ MovieCard/         # Movie/Series Card
-│   │   └── 🦶 Footer/            # Site Footer
-│   ├── 📁 lib/                   # Utilities
-│   │   └── 📡 api.ts             # TMDB API Integration
-│   └── 📁 context/               # React Context
-│       └── 🔐 AuthContext.tsx    # Authentication State
-├── 📄 package.json
-├── 📄 next.config.ts
-├── 📄 tsconfig.json
+│   ├── 📁 app/                   # App Router: pages + route handlers
+│   │   ├── 🏠 page.tsx            # Home
+│   │   ├── 📁 api/               # REST endpoints (auth, track, logs, notifications)
+│   │   ├── 🎬 movies/, 📺 series/, 🔥 trending/
+│   │   ├── 🔍 search/, 🎞️ shorts/, ❤️ watchlist/
+│   │   ├── 📖 title/[id]/, ▶️ watch/[id]/
+│   │   ├── 🔐 auth/callback/, 📱 qr/
+│   │   └── 🎨 layout.tsx, globals.css, loading/error boundaries
+│   ├── 📁 components/            # Feature-organized UI modules
+│   │   ├── Home/, Navbar/, Player/, Search/
+│   │   ├── Title/, Shared/, Shorts/, Skeletons/, Analytics/
+│   │   └── NotificationPopup.tsx
+│   ├── 📁 context/               # Global state providers
+│   │   ├── AuthContext.tsx
+│   │   ├── WatchlistContext.tsx
+│   │   ├── HistoryContext.tsx
+│   │   └── ToastContext.tsx
+│   ├── 📁 lib/                   # Integrations and utility services
+│   │   ├── api.ts, tracker.tsx
+│   │   ├── supabase.ts, supabase-browser.ts, supabase-admin.ts
+│   │   └── email.ts, email-templates.ts
+│   └── 📁 types/                 # Project type declarations
+├── 📄 package.json                # Scripts and dependencies
+├── 📄 next.config.ts              # Next.js runtime config
+├── 📄 tsconfig.json               # TypeScript config
+├── 📄 vercel.json                 # Deployment config
+├── 📄 eslint.config.mjs           # Lint rules
+├── 📄 *.sql                       # Supabase setup/migration scripts
+├── 📄 .env                         # Local environment variables
 └── 📄 README.md
 ```
 
