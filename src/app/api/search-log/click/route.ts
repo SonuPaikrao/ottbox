@@ -15,18 +15,14 @@ const adminClient = createClient(
 // Called when user clicks a search result — marks the search as a conversion
 export async function POST(req: NextRequest) {
     try {
-        const { query, content_id, content_title } = await req.json();
+        const { query, content_id, content_title, access_token } = await req.json();
         if (!query || !content_id) return NextResponse.json({ ok: false });
 
-        // ✅ Use ANON KEY to properly read session cookies
-        const cookieStore = await cookies();
-        const supabase = createServerClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // ← FIXED
-            { cookies: { get: (n) => cookieStore.get(n)?.value } }
-        );
-
-        const { data: { user } } = await supabase.auth.getUser();
+        let userId = null;
+        if (access_token) {
+            const { data: { user } } = await adminClient.auth.getUser(access_token);
+            if (user) userId = user.id;
+        }
 
         // Find the most recent search log for this query (within last 10 min) and update it
         // We use adminClient to bypass RLS
@@ -52,7 +48,7 @@ export async function POST(req: NextRequest) {
                 results_count: 1, // Assume 1 if clicked directly without tracking results
                 clicked_content_id: String(content_id),
                 clicked_content_title: content_title,
-                user_id: user?.id ?? null,
+                user_id: userId,
             });
         }
 

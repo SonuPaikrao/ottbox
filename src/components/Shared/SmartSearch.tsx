@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { searchContent, Movie } from '@/lib/api';
 import { useTracker } from '@/lib/tracker';
+import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import styles from './SmartSearch.module.css';
 
 export default function SmartSearch() {
@@ -40,11 +41,14 @@ export default function SmartSearch() {
                 setIsLoading(false);
                 setIsOpen(true);
 
+                const { data: sessionData } = await getSupabaseBrowserClient().auth.getSession();
+                const token = sessionData.session?.access_token;
+
                 // 🔍 Silently log this search
                 fetch('/api/search-log', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query.trim(), results_count: data.length })
+                    body: JSON.stringify({ query: query.trim(), results_count: data.length, access_token: token })
                 }).catch(() => {}); // Never break UI
 
                 // 🧠 ML: track search event
@@ -104,7 +108,10 @@ export default function SmartSearch() {
                             key={movie.id}
                             href={`/title/${movie.id}?type=${movie.media_type || 'movie'}`}
                             className={styles.resultItem}
-                            onClick={() => {
+                            onClick={async () => {
+                                const { data: sessionData } = await getSupabaseBrowserClient().auth.getSession();
+                                const token = sessionData.session?.access_token;
+
                                 // 🎯 Log click conversion
                                 fetch('/api/search-log/click', {
                                     method: 'POST',
@@ -113,6 +120,7 @@ export default function SmartSearch() {
                                         query: query.trim(),
                                         content_id: movie.id,
                                         content_title: movie.title || movie.name,
+                                        access_token: token
                                     })
                                 }).catch(() => {});
 

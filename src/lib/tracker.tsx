@@ -28,7 +28,9 @@ export function useTracker() {
     return useContext(TrackerContext);
 }
 
-function getSessionId(): string {
+import { getSupabaseBrowserClient } from './supabase-browser';
+
+export function getSessionId(): string {
     if (typeof window === 'undefined') return 'ssr';
     let sid = sessionStorage.getItem('_ott_sid');
     if (!sid) {
@@ -50,19 +52,23 @@ export function TrackerProvider({ children }: { children: ReactNode }) {
         queue.current = [];
 
         const sessionId = getSessionId();
-        const payload = batch.map(e => ({ ...e, session_id: sessionId }));
-
+        const payloadEvents = batch.map(e => ({ ...e, session_id: sessionId }));
+        
         try {
+            const { data } = await getSupabaseBrowserClient().auth.getSession();
+            const token = data.session?.access_token;
+            const payload = { events: payloadEvents, access_token: token };
+
             if (immediate && navigator.sendBeacon) {
                 navigator.sendBeacon(
                     '/api/track',
-                    new Blob([JSON.stringify({ events: payload })], { type: 'application/json' })
+                    new Blob([JSON.stringify(payload)], { type: 'application/json' })
                 );
             } else {
                 await fetch('/api/track', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ events: payload }),
+                    body: JSON.stringify(payload),
                 });
             }
         } catch {

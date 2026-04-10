@@ -14,27 +14,22 @@ const adminClient = createClient(
 // Body: { query: string, results_count: number }
 export async function POST(req: NextRequest) {
     try {
-        const { query, results_count } = await req.json();
+        const { query, results_count, access_token } = await req.json();
         if (!query || query.trim().length < 2) {
             return NextResponse.json({ ok: false });
         }
 
-        // ✅ Use ANON KEY to properly read session cookies
-        const cookieStore = await cookies();
-        const supabase = createServerClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // ← FIXED
-            { cookies: { get: (n) => cookieStore.get(n)?.value } }
-        );
-
-        // Get user id if logged in (optional — guest searches are also logged)
-        const { data: { user } } = await supabase.auth.getUser();
+        let userId = null;
+        if (access_token) {
+            const { data: { user } } = await adminClient.auth.getUser(access_token);
+            if (user) userId = user.id;
+        }
 
         // ✅ Use admin client to bypass RLS
         await adminClient.from('search_logs').insert({
             query: query.trim().toLowerCase(),
             results_count: results_count ?? 0,
-            user_id: user?.id ?? null,
+            user_id: userId,
         });
 
         return NextResponse.json({ ok: true });

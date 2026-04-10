@@ -16,25 +16,23 @@ const adminClient = createClient(
 // Silently logs all user behavioral events for ML training
 export async function POST(req: NextRequest) {
     try {
-        const { events } = await req.json();
+        const { events, access_token } = await req.json();
         if (!events || !Array.isArray(events) || events.length === 0) {
             return NextResponse.json({ ok: false });
         }
 
-        // ✅ Use ANON KEY to properly read session cookies and verify user
-        const cookieStore = await cookies();
-        const supabase = createServerClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,  // ← FIXED: was SERVICE_ROLE_KEY
-            { cookies: { get: (n) => cookieStore.get(n)?.value } }
-        );
-
+        // ✅ Use access_token from body for foolproof server-side auth (bypasses browser cookie issues)
+        let userId = null;
+        if (access_token) {
+            const { data: { user } } = await adminClient.auth.getUser(access_token);
+            if (user) userId = user.id;
+        }
+        
         // Only track logged-in users
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return NextResponse.json({ ok: false, reason: 'not_logged_in' });
+        if (!userId) return NextResponse.json({ ok: false, reason: 'not_logged_in' });
 
         const rows = events.map((e: any) => ({
-            user_id: user.id,
+            user_id: userId,
             session_id: e.session_id || 'unknown',
             event_type: e.event_type,
             content_id: e.content_id ? String(e.content_id) : null,

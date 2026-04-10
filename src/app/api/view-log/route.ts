@@ -14,18 +14,14 @@ const adminClient = createClient(
 // POST /api/view-log
 export async function POST(req: NextRequest) {
     try {
-        const { content_id, content_title, content_type, poster_path, completion_pct } = await req.json();
+        const { content_id, content_title, content_type, poster_path, completion_pct, access_token } = await req.json();
         if (!content_id || !content_title) return NextResponse.json({ ok: false });
 
-        // ✅ Use ANON KEY to properly read session cookies
-        const cookieStore = await cookies();
-        const supabase = createServerClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // ← FIXED
-            { cookies: { get: (n) => cookieStore.get(n)?.value } }
-        );
-
-        const { data: { user } } = await supabase.auth.getUser();
+        let userId = null;
+        if (access_token) {
+            const { data: { user } } = await adminClient.auth.getUser(access_token);
+            if (user) userId = user.id;
+        }
         const watch_hour = new Date().getHours();
 
         // ✅ Use admin client for insert
@@ -36,7 +32,7 @@ export async function POST(req: NextRequest) {
             poster_path: poster_path ?? null,
             completion_pct: completion_pct ?? 0,
             watch_hour,
-            user_id: user?.id ?? null, // nullable — guest views still tracked
+            user_id: userId, // nullable — guest views still tracked
         });
 
         return NextResponse.json({ ok: true });

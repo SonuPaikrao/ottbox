@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useTracker } from '@/lib/tracker';
+import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 interface Props {
     contentId: string;
@@ -19,9 +20,12 @@ export default function ViewTracker({ contentId, contentTitle, contentType, post
     const estimatedDuration = useRef<number>(90 * 60 * 1000);
     const { track } = useTracker();
 
-    const log = (completion_pct: number) => {
+    const log = async (completion_pct: number) => {
         if (reported.current.has(completion_pct)) return;
         reported.current.add(completion_pct);
+
+        const { data: sessionData } = await getSupabaseBrowserClient().auth.getSession();
+        const access_token = sessionData.session?.access_token;
 
         // View log API (admin analytics)
         fetch('/api/view-log', {
@@ -31,6 +35,7 @@ export default function ViewTracker({ contentId, contentTitle, contentType, post
                 content_id: contentId, content_title: contentTitle,
                 content_type: contentType, poster_path: posterPath ?? null,
                 completion_pct,
+                access_token,
             }),
         }).catch(() => {});
 
@@ -57,12 +62,20 @@ export default function ViewTracker({ contentId, contentTitle, contentType, post
             }
         }, 30_000);
 
-        const handleUnload = () => {
+        const handleUnload = async () => {
             const elapsed = Date.now() - startTime.current;
             const pct = Math.min(100, Math.round((elapsed / estimatedDuration.current) * 100));
+            
+            const { data: sessionData } = await getSupabaseBrowserClient().auth.getSession();
+            const access_token = sessionData.session?.access_token;
+
             if (navigator.sendBeacon) {
                 navigator.sendBeacon('/api/view-log', new Blob([
-                    JSON.stringify({ content_id: contentId, content_title: contentTitle, content_type: contentType, poster_path: posterPath ?? null, completion_pct: pct })
+                    JSON.stringify({ 
+                        content_id: contentId, content_title: contentTitle, 
+                        content_type: contentType, poster_path: posterPath ?? null, 
+                        completion_pct: pct, access_token 
+                    })
                 ], { type: 'application/json' }));
             }
         };
