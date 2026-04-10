@@ -26,8 +26,17 @@ export async function POST(req: NextRequest) {
 
         if (error) {
             console.error('Magic Link generation error:', error);
-            // Don't expose internal errors if user doesn't exist, just abstract it or allow signup
-            return NextResponse.json({ error: error.message }, { status: 400 });
+            
+            // Supabase's `generateLink` tries to implicitly sign up new users. 
+            // Since we don't provide a password, it throws a 422 unprocessable_entity or weak_password error if the user doesn't exist.
+            // We use this behavior to block magic link logins for unregistered emails.
+            if (error.status === 422 || error.code === 'weak_password' || error.message.includes('Password')) {
+                 return NextResponse.json({ 
+                     error: 'No account found with this email. Please sign up first.' 
+                 }, { status: 400 });
+            }
+
+            return NextResponse.json({ error: 'Failed to generate link' }, { status: 400 });
         }
 
         const magicLinkUrl = data?.properties?.action_link;
