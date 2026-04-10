@@ -14,8 +14,20 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
         }
 
-        // 1. Generate Magic Link via Supabase Admin API
-        // This generates the link but does NOT send the default Supabase email.
+        // 1. Explicitly check if the user exists in our DB to prevent ghost account creation
+        const { data: existingUser, error: checkError } = await supabaseAdmin
+            .from('users')
+            .select('id')
+            .eq('email', email)
+            .single();
+
+        if (!existingUser) {
+            return NextResponse.json({ 
+                error: 'No account found with this email. Please sign up first.' 
+            }, { status: 404 });
+        }
+
+        // 2. Generate Magic Link via Supabase Admin API
         const { data, error } = await supabaseAdmin.auth.admin.generateLink({
             type: 'magiclink',
             email,
@@ -26,14 +38,12 @@ export async function POST(req: NextRequest) {
 
         if (error) {
             console.error('Magic Link generation error:', error);
-            
-            // Supabase's `generateLink` tries to implicitly sign up new users. 
-            // Since we don't provide a password, it throws a 422 unprocessable_entity or weak_password error if the user doesn't exist.
-            // We use this behavior to block magic link logins for unregistered emails.
+
+
             if (error.status === 422 || error.code === 'weak_password' || error.message.includes('Password')) {
-                 return NextResponse.json({ 
-                     error: 'No account found with this email. Please sign up first.' 
-                 }, { status: 400 });
+                return NextResponse.json({
+                    error: 'No account found with this email. Please sign up first.'
+                }, { status: 400 });
             }
 
             return NextResponse.json({ error: 'Failed to generate link' }, { status: 400 });
@@ -49,9 +59,9 @@ export async function POST(req: NextRequest) {
         const emailResult = await sendMagicLinkEmail(email, magicLinkUrl);
 
         if (!emailResult.success) {
-            return NextResponse.json({ 
-                error: 'Link generated but failed to send email.', 
-                details: emailResult.error 
+            return NextResponse.json({
+                error: 'Link generated but failed to send email.',
+                details: emailResult.error
             }, { status: 500 });
         }
 
