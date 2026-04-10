@@ -100,7 +100,7 @@ export const getWelcomeEmailHtml = (email: string, name: string, password?: stri
       <p class="subtext">
         ${verificationLink
       ? `Hi <strong>${name}</strong>,<br/>You're one click away from unlimited entertainment. Please verify your email to get started.`
-      : `Hi <strong>${name}</strong>,<br/>Your account is all set. We've curated the best movies and shows just for you.`
+      : `Hi <strong>${name}</strong>,<br/>Your OTT Box account is ready! Below are your login credentials — <strong>save them</strong> to log in from any device, anytime.`
     }
       </p>
 
@@ -120,8 +120,14 @@ export const getWelcomeEmailHtml = (email: string, name: string, password?: stri
           </div>
 
           <p style="font-size: 12px; color: #666; margin-top: 20px; margin-bottom: 0;">
-             (Auto-generated for your security. You can change this later.)
+             Keep this password safe — you can update it anytime from Settings.
           </p>
+
+          <!-- Cross-device tip -->
+          <div style="background: #0d1f0d; border: 1px solid #1a4d1a; border-radius: 6px; padding: 14px; margin-top: 16px; text-align: left;">
+            <p style="font-size: 13px; color: #46d369; margin: 0 0 6px; font-weight: 700;">📱 Log in from any device</p>
+            <p style="font-size: 12px; color: #888; margin: 0; line-height: 1.6;">Use your <strong style="color:#ccc">email + password</strong> above to sign in from <strong style="color:#ccc">any browser or device</strong> — even without Google. Save this email!</p>
+          </div>
         </div>
       ` : ''}
 
