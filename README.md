@@ -1,6 +1,10 @@
 # 🎬 OTT Box - Premium Streaming Experience
 
 <div align="center">
+  <h3>⭐⭐ If you find this project useful, please consider giving it a STAR! ⭐⭐</h3>
+  <p>It helps the algorithm and motivates me to add more enterprise features!</p>
+</div>
+<div align="center">
   <img src="./public/ott-banner.png" alt="OTT Box Banner" width="800" style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
   
   <br><br>
@@ -90,6 +94,18 @@
 - 📹 **Video.js** - Professional video player integration
 - 🎥 **YouTube Embed** - Trailer playback in hero section
 - 🖼️ **Next/Image** - Optimized image loading and caching
+
+---
+
+## 🏗️ **System Architecture**
+
+Our architecture is designed to handle real-time concurrency, secure authentication, and edge-deployed frontend delivery.
+
+<div align="center">
+  <img src="./public/System_Architecture_Map.png" alt="System Architecture Map" width="100%" style="border-radius: 12px; margin-bottom: 20px;">
+  <br>
+  <img src="./public/System_Connectivity_Map.png" alt="System Connectivity Map" width="100%" style="border-radius: 12px;">
+</div>
 
 ---
 
