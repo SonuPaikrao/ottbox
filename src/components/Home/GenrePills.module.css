@@ -1,0 +1,68 @@
+.container {
+    /* Sticky handled by parent in page.tsx */
+    position: relative;
+    z-index: 20;
+    /* padding handles internally */
+    display: flex;
+    justify-content: center;
+}
+
+.scrollWrapper {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 10px 4%;
+    /* Align with container padding */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE */
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+.scrollWrapper::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.pill {
+    flex-shrink: 0;
+    padding: 8px 20px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e5e5e5;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.pill:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-top: 0;
+    }
+
+    .scrollWrapper {
+        gap: 10px;
+        padding: 10px 20px;
+    }
+
+    .pill {
+        padding: 6px 16px;
+        font-size: 0.85rem;
+    }
+}

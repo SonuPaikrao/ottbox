@@ -1,0 +1,38 @@
+{
+  "name": "ott-box",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 --webpack",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.95.2",
+    "@tanstack/react-table": "^8.21.3",
+    "all": "^0.0.0",
+    "d3-scale": "^4.0.2",
+    "lucide-react": "^0.563.0",
+    "next": "^16.1.6",
+    "next-pwa": "^5.6.0",
+    "nodemailer": "^8.0.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-intersection-observer": "^10.0.2",
+    "react-simple-maps": "^3.0.0",
+    "recharts": "^3.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/nodemailer": "^7.0.9",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "typescript": "^5",
+    "video.js": "^8.23.6"
+  }
+}

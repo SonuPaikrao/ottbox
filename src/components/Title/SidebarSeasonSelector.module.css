@@ -1,0 +1,137 @@
+.sidebarContainer {
+    background: #121212;
+    border-left: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 600px;
+}
+
+.header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #222;
+}
+
+.title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.section {
+    padding: 20px;
+}
+
+.sectionTitle {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.seasonGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 25px;
+}
+
+.seasonBtn {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #aaa;
+    padding: 8px 0;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.seasonBtn:hover {
+    background: #252525;
+    color: #fff;
+}
+
+.activeSeason {
+    background: var(--primary) !important;
+    /* Netflix Red */
+    border-color: var(--primary) !important;
+    color: #fff !important;
+}
+
+.episodeGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 5px;
+    /* specific scrollbar spacing */
+}
+
+/* Custom Scrollbar for episode grid */
+.episodeGrid::-webkit-scrollbar {
+    width: 4px;
+}
+
+.episodeGrid::-webkit-scrollbar-track {
+    background: #111;
+}
+
+.episodeGrid::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 2px;
+}
+
+.episodeBtn {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #aaa;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.episodeBtn:hover {
+    background: #252525;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.activeEpisode {
+    background: #fff !important;
+    color: #000 !important;
+    border-color: #fff !important;
+    font-weight: bold;
+}
+
+.loading {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 1024px) {
+    .seasonGrid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .episodeGrid {
+        grid-template-columns: repeat(8, 1fr);
+    }
+}

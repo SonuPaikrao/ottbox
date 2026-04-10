@@ -1,0 +1,111 @@
+.container {
+    margin-bottom: 50px;
+    position: relative;
+    padding-left: 20px;
+}
+
+.title {
+    font-size: 4rem;
+    /* Massive size like reference */
+    font-weight: 900;
+    margin-bottom: 5px;
+    /* Tight spacing */
+    color: transparent;
+    -webkit-text-stroke: 3px var(--primary);
+    text-transform: uppercase;
+    font-family: 'Arial Black', sans-serif;
+    letter-spacing: -2px;
+    line-height: 1;
+}
+
+.subtitle {
+    color: white;
+    font-weight: 400;
+    font-size: 1rem;
+    /* Smaller, cleaner */
+    letter-spacing: 4px;
+    /* Wide spacing like reference */
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    -webkit-text-stroke: 0;
+}
+
+.slider {
+    display: flex;
+    gap: 40px;
+    /* Wider gap for 5-card layout */
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 20px 0 40px 20px;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.slider::-webkit-scrollbar {
+    display: none;
+}
+
+.card {
+    position: relative;
+    flex-shrink: 0;
+    width: 240px;
+    /* Bigger cards - only 5 fit */
+    height: 350px;
+    /* Proportional */
+    transition: transform 0.3s ease;
+    overflow: visible;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+/* Big Number Styling - Close to card */
+.number {
+    position: absolute;
+    left: -60px;
+    /* Fixed position close to card */
+    bottom: -10px;
+    font-size: 10rem;
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 3px var(--primary);
+    z-index: 0;
+    /* Behind the card */
+    pointer-events: none;
+    font-family: 'Arial Black', sans-serif;
+    letter-spacing: -6px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card:hover .number {
+    color: var(--primary);
+    /* Fill on hover */
+    -webkit-text-stroke: 0px transparent;
+    transform: translateX(-3px) scale(1.01);
+    /* Subtle movement */
+    text-shadow: 0 0 20px rgba(229, 9, 20, 0.6);
+}
+
+/* ... special nth-child ... */
+
+.imageWrapper {
+    width: 240px;
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #222;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 5;
+    /* HIGH - card in FRONT of number */
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

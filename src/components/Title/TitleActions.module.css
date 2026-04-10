@@ -1,0 +1,73 @@
+.actionsWrapper {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    gap: 15px;
+}
+
+.playBtn,
+.trailerBtn {
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+    white-space: nowrap;
+}
+
+.playBtn {
+    background: #e50914;
+    color: white;
+}
+
+.playBtn:hover {
+    transform: scale(1.05);
+    background: #f40612;
+}
+
+.trailerBtn {
+    background: rgba(109, 109, 110, 0.7);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 15px 30px;
+}
+
+.trailerBtn:hover {
+    transform: scale(1.05);
+    background: rgba(109, 109, 110, 0.9);
+}
+
+.watchlistWrapper {
+    transform: scale(1.2);
+    margin-left: 5px;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .actionsWrapper {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .playBtn,
+    .trailerBtn {
+        flex: 1;
+        /* Split width evenly */
+        padding: 12px 10px;
+        /* Reduced padding */
+        font-size: 1rem;
+        /* Smaller font */
+        width: auto;
+    }
+
+    .watchlistWrapper {
+        transform: scale(1);
+        /* Reset scale */
+        margin-left: 0;
+    }
+}

@@ -1,0 +1,83 @@
+.main {
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-left: 15px;
+  border-left: 4px solid var(--primary);
+  line-height: 1;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+/* Big Tablets / Small Laptops */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .sectionTitle {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+}
+
+/* Mobile Phones (Portrait) */
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding-bottom: 100px;
+    /* Safe area for Bottom Nav */
+    padding-left: 5px;
+    /* Slight offset compensation */
+    padding-right: 5px;
+  }
+
+  .sectionTitle {
+    font-size: 1.3rem;
+    border-left-width: 3px;
+    padding-left: 10px;
+  }
+
+  /* ... previous media queries ... */
+  .sectionTitle {
+    font-size: 1.3rem;
+    border-left-width: 3px;
+    padding-left: 10px;
+  }
+}
+
+.stickyHeader {
+  position: -webkit-sticky;
+  /* Safari */
+  position: sticky;
+  top: 70px;
+  /* Exact height of navbar */
+  z-index: 99;
+  background-color: var(--background);
+  /* Use variable for consistency */
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+  margin-top: 0;
+}
