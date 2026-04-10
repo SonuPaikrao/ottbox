@@ -19,13 +19,19 @@ export default function ViewTracker({ contentId, contentTitle, contentType, post
     const startTime = useRef<number>(Date.now());
     const estimatedDuration = useRef<number>(90 * 60 * 1000);
     const { track } = useTracker();
+    const tokenRef = useRef<string | undefined>();
+
+    useEffect(() => {
+        getSupabaseBrowserClient().auth.getSession().then(({ data }) => {
+            tokenRef.current = data.session?.access_token;
+        });
+    }, []);
 
     const log = async (completion_pct: number) => {
         if (reported.current.has(completion_pct)) return;
         reported.current.add(completion_pct);
 
-        const { data: sessionData } = await getSupabaseBrowserClient().auth.getSession();
-        const access_token = sessionData.session?.access_token;
+        const access_token = tokenRef.current;
 
         // View log API (admin analytics)
         fetch('/api/view-log', {
@@ -62,12 +68,10 @@ export default function ViewTracker({ contentId, contentTitle, contentType, post
             }
         }, 30_000);
 
-        const handleUnload = async () => {
+        const handleUnload = () => {
             const elapsed = Date.now() - startTime.current;
             const pct = Math.min(100, Math.round((elapsed / estimatedDuration.current) * 100));
-            
-            const { data: sessionData } = await getSupabaseBrowserClient().auth.getSession();
-            const access_token = sessionData.session?.access_token;
+            const access_token = tokenRef.current;
 
             if (navigator.sendBeacon) {
                 navigator.sendBeacon('/api/view-log', new Blob([

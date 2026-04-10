@@ -15,9 +15,17 @@ export default function SmartSearch() {
     const [results, setResults] = useState<Movie[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [token, setToken] = useState<string | undefined>();
     const wrapperRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const { track } = useTracker();
+
+    // Fetch auth token once on mount for synchronous tracking
+    useEffect(() => {
+        getSupabaseBrowserClient().auth.getSession().then(({ data }) => {
+            setToken(data.session?.access_token);
+        });
+    }, []);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -41,15 +49,18 @@ export default function SmartSearch() {
                 setIsLoading(false);
                 setIsOpen(true);
 
-                const { data: sessionData } = await getSupabaseBrowserClient().auth.getSession();
-                const token = sessionData.session?.access_token;
-
                 // 🔍 Silently log this search
-                fetch('/api/search-log', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query.trim(), results_count: data.length, access_token: token })
-                }).catch(() => {}); // Never break UI
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon('/api/search-log', new Blob([
+                        JSON.stringify({ query: query.trim(), results_count: data.length, access_token: token })
+                    ], { type: 'application/json' }));
+                } else {
+                    fetch('/api/search-log', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: query.trim(), results_count: data.length, access_token: token })
+                    }).catch(() => {});
+                }
 
                 // 🧠 ML: track search event
                 track({
@@ -108,21 +119,24 @@ export default function SmartSearch() {
                             key={movie.id}
                             href={`/title/${movie.id}?type=${movie.media_type || 'movie'}`}
                             className={styles.resultItem}
-                            onClick={async () => {
-                                const { data: sessionData } = await getSupabaseBrowserClient().auth.getSession();
-                                const token = sessionData.session?.access_token;
-
-                                // 🎯 Log click conversion
-                                fetch('/api/search-log/click', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        query: query.trim(),
-                                        content_id: movie.id,
-                                        content_title: movie.title || movie.name,
-                                        access_token: token
-                                    })
-                                }).catch(() => {});
+                            onClick={() => {
+                                // 🎯 Log click conversion using sendBeacon for reliable delivery during navigation
+                                const clickPayload = {
+                                    query: query.trim(),
+                                    content_id: movie.id,
+                                    content_title: movie.title || movie.name,
+                                    access_token: token
+                                };
+                                
+                                if (navigator.sendBeacon) {
+                                    navigator.sendBeacon('/api/search-log/click', new Blob([JSON.stringify(clickPayload)], { type: 'application/json' }));
+                                } else {
+                                    fetch('/api/search-log/click', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(clickPayload)
+                                    }).catch(() => {});
+                                }
 
                                 // 🧠 ML: track search → click conversion
                                 track({

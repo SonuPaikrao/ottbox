@@ -9,6 +9,7 @@ import styles from '@/app/watch/[id]/page.module.css';
 import Link from 'next/link';
 import { Star, Calendar } from 'lucide-react';
 import { useHistory } from '@/context/HistoryContext';
+import ViewTracker from '@/components/Title/ViewTracker';
 
 interface WatchContainerProps {
     movie: Movie;
@@ -37,6 +38,14 @@ export default function WatchContainer({ movie, tmdbId }: WatchContainerProps) {
     return (
         <div className="container" style={{ paddingTop: '80px' }}>
             <div className={isTV ? styles.watchLayoutTV : ''}>
+
+                {/* Silent tracker to record watch events */}
+                <ViewTracker
+                    contentId={String(tmdbId)}
+                    contentTitle={movie.title || movie.name || 'Unknown'}
+                    contentType={movie.media_type || 'movie'}
+                    posterPath={movie.poster_path}
+                />
 
                 {/* Main Content Area (Player + Info) */}
                 <div className={styles.mainContent}>
