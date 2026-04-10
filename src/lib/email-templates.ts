@@ -9,7 +9,7 @@ export const getWelcomeEmailHtml = (email: string, name: string, password?: stri
   <title>Welcome to OTT Box</title>
   <style>
     body { margin: 0; padding: 0; background-color: #000000; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff; }
-    .container { max-width: 600px; margin: 40px auto; background-color: #141414; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border: 1px solid #222; }
+    .container { max-width: 600px; margin: 40px auto; background-color: #141414; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05); border-top: 4px solid #e50914; }
     
     /* Header */
     .header { padding: 40px 0 20px; text-align: center; }
@@ -137,9 +137,9 @@ export const getWelcomeEmailHtml = (email: string, name: string, password?: stri
     <!-- Footer -->
     <div class="footer">
       <div class="social-links">
-        <a href="https://github.com/SonuPaikrao" class="social-icon">GitHub</a>
-        <a href="#" class="social-icon">Twitter</a>
-        <a href="#" class="social-icon">Instagram</a>
+        <a href="https://github.com/SonuPaikrao" class="social-icon" style="color: #3b82f6;">GitHub</a>
+        <a href="#" class="social-icon" style="color: #3b82f6;">Twitter</a>
+        <a href="#" class="social-icon" style="color: #3b82f6;">Instagram</a>
       </div>
       
       <p class="copyright">
@@ -166,7 +166,7 @@ export const getMagicLinkEmailHtml = (email: string, magicLink: string) => {
     <title>Log in to OTT Box</title>
     <style>
       body { margin: 0; padding: 0; background-color: #000000; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff; }
-      .container { max-width: 600px; margin: 40px auto; background-color: #141414; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border: 1px solid #222; }
+      .container { max-width: 600px; margin: 40px auto; background-color: #141414; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05); border-top: 4px solid #e50914; }
       
       /* Header */
       .header { padding: 40px 0 20px; text-align: center; }
@@ -199,6 +199,8 @@ export const getMagicLinkEmailHtml = (email: string, magicLink: string) => {
       
       /* Footer */
       .footer { background-color: #0a0a0a; padding: 30px 20px; text-align: center; border-top: 1px solid #222; }
+      .social-links { margin-bottom: 20px; }
+      .social-icon { display: inline-block; margin: 0 10px; color: #666; text-decoration: none; font-size: 14px; }
       .copyright { color: #52525b; font-size: 12px; margin-bottom: 10px; }
       .creator-tag { color: #71717a; font-size: 12px; }
       .creator-tag strong { color: #e50914; }
@@ -249,8 +251,18 @@ export const getMagicLinkEmailHtml = (email: string, magicLink: string) => {
   
       <!-- Footer -->
       <div class="footer">
+        <div class="social-links">
+          <a href="https://github.com/SonuPaikrao" class="social-icon" style="color: #3b82f6;">GitHub</a>
+          <a href="#" class="social-icon" style="color: #3b82f6;">Twitter</a>
+          <a href="#" class="social-icon" style="color: #3b82f6;">Instagram</a>
+        </div>
+        
         <p class="copyright">
           &copy; ${new Date().getFullYear()} OTT Box. All rights reserved.
+        </p>
+
+        <p class="creator-tag">
+          Made with ❤️ & ☕ by <strong>Sonu Rao</strong>
         </p>
       </div>
     </div>
