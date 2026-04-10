@@ -12,11 +12,11 @@ interface LoginModalProps {
 import { createPortal } from 'react-dom';
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
-    const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
+    const { signInWithGoogle, signInWithEmail, signInWithMagicLink, signUpWithEmail } = useAuth();
     const [loading, setLoading] = useState(false);
 
-    // 'signin' or 'signup' or 'success'
-    const [mode, setMode] = useState<'signin' | 'signup' | 'success'>('signin');
+    // 'signin' or 'signup' or 'magiclink' or 'success'
+    const [mode, setMode] = useState<'signin' | 'signup' | 'magiclink' | 'success'>('signin');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -62,6 +62,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 const { error } = await signInWithEmail(email, password);
                 if (error) throw error;
                 onClose(); // Success
+            } else if (mode === 'magiclink') {
+                const { error } = await signInWithMagicLink(email);
+                if (error) throw error;
+                setMessage('Magic Link sent!');
+                setMode('success');
             } else {
                 // Call our Custom API for Signup (To send Premium Email + Password)
                 const res = await fetch('/api/auth/signup', {
@@ -125,7 +130,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         </div>
                         <h2 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '10px' }}>Check Your Inbox</h2>
                         <p style={{ color: '#ccc', marginBottom: '30px', lineHeight: '1.5' }}>
-                            We've sent a verification link and your login credentials to <strong style={{ color: 'white' }}>{email}</strong>.
+                            {message === 'Magic Link sent!'
+                                ? <>We've sent a Magic Link to <strong style={{ color: 'white' }}>{email}</strong>.</>
+                                : <>We've sent a verification link and your login credentials to <strong style={{ color: 'white' }}>{email}</strong>.</>
+                            }
                         </p>
                         <button
                             onClick={() => { setMode('signin'); setError(null); setMessage(null); }}
@@ -144,7 +152,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 ) : (
                     <>
                         <h2 style={{ fontSize: '2rem', marginBottom: '20px', fontWeight: 700 }}>
-                            {mode === 'signin' ? 'Welcome Back' : 'Join OTT Box'}
+                            {mode === 'signin' ? 'Welcome Back' : mode === 'magiclink' ? 'Magic Link Login' : 'Join OTT Box'}
                         </h2>
 
                         {/* Main Action: Google */}
@@ -191,14 +199,16 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 onChange={(e) => setEmail(e.target.value)}
                                 style={{ padding: '12px', background: '#333', border: 'none', borderRadius: '4px', color: 'white' }}
                             />
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                style={{ padding: '12px', background: '#333', border: 'none', borderRadius: '4px', color: 'white' }}
-                            />
+                            {mode !== 'magiclink' && (
+                                <input
+                                    type="password"
+                                    placeholder="Password"
+                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    style={{ padding: '12px', background: '#333', border: 'none', borderRadius: '4px', color: 'white' }}
+                                />
+                            )}
                             <button
                                 type="submit"
                                 disabled={loading}
@@ -208,12 +218,27 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                     opacity: loading ? 0.7 : 1
                                 }}
                             >
-                                {loading ? 'Please wait...' : (mode === 'signin' ? 'Sign In' : 'Sign Up')}
+                                {loading ? 'Please wait...' : (mode === 'signin' ? 'Sign In' : mode === 'magiclink' ? 'Send Magic Link' : 'Sign Up')}
                             </button>
                         </form>
 
+                        {/* Magic Link Toggle */}
+                        {mode !== 'magiclink' && (
+                            <button
+                                type="button"
+                                onClick={() => { setMode('magiclink'); setError(null); setMessage(null); }}
+                                style={{
+                                    background: 'none', border: '1px solid #444', color: '#ccc',
+                                    padding: '10px', width: '100%', borderRadius: '4px', cursor: 'pointer',
+                                    marginTop: '15px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                                }}
+                            >
+                                <Mail size={16} /> Use Magic Link instead
+                            </button>
+                        )}
+
                         <p style={{ marginTop: '20px', color: '#999', fontSize: '0.9rem' }}>
-                            {mode === 'signin' ? 'New to OTT Box?' : 'Already have an account?'}
+                            {mode === 'signin' ? 'New to OTT Box?' : mode === 'magiclink' ? 'Remember your password?' : 'Already have an account?'}
                             <span
                                 onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(null); setMessage(null); }}
                                 style={{ color: 'white', marginLeft: '5px', cursor: 'pointer', textDecoration: 'underline' }}

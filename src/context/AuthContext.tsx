@@ -10,6 +10,7 @@ interface AuthContextType {
     loading: boolean;
     signInWithGoogle: () => Promise<void>;
     signInWithEmail: (email: string, pass: string) => Promise<any>;
+    signInWithMagicLink: (email: string) => Promise<any>;
     signUpWithEmail: (email: string, pass: string) => Promise<any>;
     signOut: () => Promise<void>;
 }
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
     loading: true,
     signInWithGoogle: async () => { },
     signInWithEmail: async () => null,
+    signInWithMagicLink: async () => null,
     signUpWithEmail: async () => null,
     signOut: async () => { },
 });
@@ -83,6 +85,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
     };
 
+    const signInWithMagicLink = async (email: string) => {
+        return await supabase.auth.signInWithOtp({
+            email,
+            options: {
+                shouldCreateUser: true,
+                emailRedirectTo: `${window.location.origin}/auth/callback`,
+            },
+        });
+    };
+
     const signUpWithEmail = async (email: string, pass: string) => {
         return await supabase.auth.signUp({
             email,
@@ -95,7 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, session, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut }}>
+        <AuthContext.Provider value={{ user, session, loading, signInWithGoogle, signInWithEmail, signInWithMagicLink, signUpWithEmail, signOut }}>
             {children}
         </AuthContext.Provider>
     );
