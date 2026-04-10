@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
 export async function POST(req: NextRequest) {
@@ -15,20 +14,20 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
         }
 
-        // 1. Verify the mobile user has a valid session using SSR cookies
-        const cookieStore = await cookies();
-        const supabase = createServerClient(
+        // 1. Verify the mobile user has a valid session using the Bearer token
+        const authHeader = req.headers.get('Authorization');
+        const token = authHeader?.replace(/^Bearer\s+/i, '');
+
+        if (!token) {
+            return NextResponse.json({ error: 'Missing authentication token' }, { status: 401 });
+        }
+
+        const supabase = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            {
-                cookies: {
-                    getAll: () => cookieStore.getAll(),
-                    setAll: () => {}, // read-only in route handler
-                }
-            }
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
         );
 
-        const { data: { user }, error: sessionError } = await supabase.auth.getUser();
+        const { data: { user }, error: sessionError } = await supabase.auth.getUser(token);
 
         if (sessionError || !user?.email) {
             return NextResponse.json({ error: 'Unauthorized. Please log in first on your phone.' }, { status: 401 });

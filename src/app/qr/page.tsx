@@ -7,7 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 function QRLoginContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { user, loading } = useAuth();
+    const { user, session, loading } = useAuth();
 
     const channelId = searchParams.get('code');
     const [status, setStatus] = useState<'idle' | 'approving' | 'approved' | 'error'>('idle');
@@ -32,7 +32,10 @@ function QRLoginContent() {
         try {
             const res = await fetch('/api/auth/qr', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': session?.access_token ? `Bearer ${session.access_token}` : ''
+                },
                 body: JSON.stringify({ channelId })
             });
 
