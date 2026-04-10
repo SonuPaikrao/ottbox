@@ -12,6 +12,7 @@ function QRLoginContent() {
     const channelId = searchParams.get('code');
     const [status, setStatus] = useState<'idle' | 'approving' | 'approved' | 'error'>('idle');
     const [errorMsg, setErrorMsg] = useState('');
+    const [fadingOut, setFadingOut] = useState(false);
 
     useEffect(() => {
         // Redirect to login if not authenticated
@@ -19,6 +20,21 @@ function QRLoginContent() {
             router.push(`/?qr=${channelId}`);
         }
     }, [user, loading, channelId, router]);
+
+    // Auto-vanish effect after approval
+    useEffect(() => {
+        if (status === 'approved') {
+            const timer1 = setTimeout(() => setFadingOut(true), 5000); // 5 sec wait
+            return () => clearTimeout(timer1);
+        }
+    }, [status]);
+
+    useEffect(() => {
+        if (fadingOut) {
+            const timer2 = setTimeout(() => router.push('/'), 1200); // 1.2s animation duration
+            return () => clearTimeout(timer2);
+        }
+    }, [fadingOut, router]);
 
     const handleApprove = async () => {
         if (!channelId) {
@@ -79,7 +95,22 @@ function QRLoginContent() {
 
     return (
         <div style={styles.container}>
-            <div style={styles.card}>
+            <div style={{
+                ...styles.card,
+                ...(fadingOut ? styles.cardFadingOut : {})
+            }}>
+                {/* Close Button */}
+                <button
+                    onClick={() => router.push('/')}
+                    style={{
+                        position: 'absolute', top: '16px', right: '16px',
+                        background: 'none', border: 'none', color: '#666', cursor: 'pointer',
+                        fontSize: '28px', lineHeight: '1', padding: '4px 10px'
+                    }}
+                >
+                    &times;
+                </button>
+
                 {/* Logo */}
                 <img
                     src={`${process.env.NEXT_PUBLIC_SITE_URL}/logo.svg`}
@@ -153,6 +184,7 @@ const styles: Record<string, React.CSSProperties> = {
         fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
     },
     card: {
+        position: 'relative',
         backgroundColor: '#141414',
         borderRadius: '16px',
         padding: '40px 32px',
@@ -161,6 +193,12 @@ const styles: Record<string, React.CSSProperties> = {
         textAlign: 'center',
         borderTop: '4px solid #e50914',
         boxShadow: '0 20px 60px rgba(0,0,0,0.8)',
+        transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    },
+    cardFadingOut: {
+        opacity: 0,
+        transform: 'scale(1.2) translateY(-20px)',
+        filter: 'blur(10px)',
     },
     iconCircle: {
         fontSize: '48px',
