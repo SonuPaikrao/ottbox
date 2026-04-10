@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useRef, useCallback, useEffect, ReactNode } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
 interface TrackEvent {
     event_type:
@@ -20,17 +21,16 @@ interface TrackEvent {
 
 interface TrackerContextType {
     track: (event: TrackEvent) => void;
+    getToken: () => string | undefined;
 }
 
-const TrackerContext = createContext<TrackerContextType>({ track: () => {} });
+const TrackerContext = createContext<TrackerContextType>({ track: () => {}, getToken: () => undefined });
 
 export function useTracker() {
     return useContext(TrackerContext);
 }
 
-import { getSupabaseBrowserClient } from './supabase-browser';
-
-export function getSessionId(): string {
+function getSessionId(): string {
     if (typeof window === 'undefined') return 'ssr';
     let sid = sessionStorage.getItem('_ott_sid');
     if (!sid) {
@@ -43,6 +43,15 @@ export function getSessionId(): string {
 export function TrackerProvider({ children }: { children: ReactNode }) {
     const queue = useRef<TrackEvent[]>([]);
     const flushing = useRef(false);
+    const { session } = useAuth(); // ✅ Get session directly from AuthContext (already works!)
+    const tokenRef = useRef<string | undefined>(undefined);
+
+    // Keep tokenRef in sync with session — AuthContext already handles cookie/token refresh
+    useEffect(() => {
+        tokenRef.current = session?.access_token ?? undefined;
+    }, [session]);
+
+    const getToken = useCallback(() => tokenRef.current, []);
 
     const flush = useCallback(async (immediate = false) => {
         if (flushing.current || queue.current.length === 0) return;
@@ -53,10 +62,9 @@ export function TrackerProvider({ children }: { children: ReactNode }) {
 
         const sessionId = getSessionId();
         const payloadEvents = batch.map(e => ({ ...e, session_id: sessionId }));
-        
+        const token = tokenRef.current;
+
         try {
-            const { data } = await getSupabaseBrowserClient().auth.getSession();
-            const token = data.session?.access_token;
             const payload = { events: payloadEvents, access_token: token };
 
             if (immediate && navigator.sendBeacon) {
@@ -104,7 +112,7 @@ export function TrackerProvider({ children }: { children: ReactNode }) {
     }, [flush]);
 
     return (
-        <TrackerContext.Provider value={{ track }}>
+        <TrackerContext.Provider value={{ track, getToken }}>
             {children}
         </TrackerContext.Provider>
     );

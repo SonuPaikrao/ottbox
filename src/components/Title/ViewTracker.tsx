@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 import { useTracker } from '@/lib/tracker';
-import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 interface Props {
     contentId: string;
@@ -18,20 +17,13 @@ export default function ViewTracker({ contentId, contentTitle, contentType, post
     const reported = useRef<Set<number>>(new Set());
     const startTime = useRef<number>(Date.now());
     const estimatedDuration = useRef<number>(90 * 60 * 1000);
-    const { track } = useTracker();
-    const tokenRef = useRef<string | undefined>(undefined);
+    const { track, getToken } = useTracker();
 
-    useEffect(() => {
-        getSupabaseBrowserClient().auth.getSession().then((sessionResult: any) => {
-            tokenRef.current = sessionResult.data?.session?.access_token;
-        });
-    }, []);
-
-    const log = async (completion_pct: number) => {
+    const log = (completion_pct: number) => {
         if (reported.current.has(completion_pct)) return;
         reported.current.add(completion_pct);
 
-        const access_token = tokenRef.current;
+        const access_token = getToken(); // ✅ Pulled from AuthContext via TrackerProvider
 
         // View log API (admin analytics)
         fetch('/api/view-log', {
@@ -45,7 +37,7 @@ export default function ViewTracker({ contentId, contentTitle, contentType, post
             }),
         }).catch(() => {});
 
-        // 🧠 ML tracker — richer event with type
+        // 🧠 ML tracker
         track({
             event_type: completion_pct === 0 ? 'view_start' : 'view_milestone',
             content_id: contentId,
@@ -71,14 +63,14 @@ export default function ViewTracker({ contentId, contentTitle, contentType, post
         const handleUnload = () => {
             const elapsed = Date.now() - startTime.current;
             const pct = Math.min(100, Math.round((elapsed / estimatedDuration.current) * 100));
-            const access_token = tokenRef.current;
+            const access_token = getToken();
 
             if (navigator.sendBeacon) {
                 navigator.sendBeacon('/api/view-log', new Blob([
-                    JSON.stringify({ 
-                        content_id: contentId, content_title: contentTitle, 
-                        content_type: contentType, poster_path: posterPath ?? null, 
-                        completion_pct: pct, access_token 
+                    JSON.stringify({
+                        content_id: contentId, content_title: contentTitle,
+                        content_type: contentType, poster_path: posterPath ?? null,
+                        completion_pct: pct, access_token
                     })
                 ], { type: 'application/json' }));
             }
@@ -93,4 +85,3 @@ export default function ViewTracker({ contentId, contentTitle, contentType, post
 
     return null;
 }
-
