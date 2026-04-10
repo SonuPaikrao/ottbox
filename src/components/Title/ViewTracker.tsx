@@ -19,10 +19,10 @@ export default function ViewTracker({ contentId, contentTitle, contentType, post
     const startTime = useRef<number>(Date.now());
     const estimatedDuration = useRef<number>(90 * 60 * 1000);
     const { track } = useTracker();
-    const tokenRef = useRef<string | undefined>();
+    const tokenRef = useRef<string | undefined>(undefined);
 
     useEffect(() => {
-        getSupabaseBrowserClient().auth.getSession().then((sessionResult) => {
+        getSupabaseBrowserClient().auth.getSession().then((sessionResult: any) => {
             tokenRef.current = sessionResult.data?.session?.access_token;
         });
     }, []);
