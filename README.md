@@ -24,6 +24,9 @@
 
 ### 🔥 **Hot New Features**
 
+- 🔐 **Zero-Click QR Login** - Real-time Netflix-style WebSocket auth from mobile to desktop.
+- 💌 **Premium Emailing** - Automated, custom-branded Welcome & Magic Link emails.
+- 🛡️ **Secure Magic Links** - Advanced database checks to prevent ghost account creation.
 - 🎬 **Shorts/Reels Feed** - Shorts/Reels-style vertical video feed for immersive trailer discovery.
 - 🛡️ **Smart Watchlist** - Protected watchlist with authentication and easy management.
 - 📱 **PWA Support** - Installable as a native app on all devices.
