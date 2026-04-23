@@ -147,6 +147,14 @@ export default function Navbar() {
                                         </div>
 
                                         <Link
+                                            href="/profile"
+                                            className={styles.dropdownItem}
+                                            onClick={() => setShowProfileMenu(false)}
+                                        >
+                                            Manage Profile
+                                        </Link>
+
+                                        <Link
                                             href="/watchlist"
                                             className={styles.dropdownItem}
                                             onClick={() => setShowProfileMenu(false)}

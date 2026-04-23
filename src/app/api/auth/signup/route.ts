@@ -5,7 +5,7 @@ import { sendWelcomeEmail } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
     try {
-        const { email, password } = await req.json();
+        const { email, password, fullName } = await req.json();
 
         if (!email || !password) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
             email,
             password,
             options: {
-                data: { full_name: email.split('@')[0] } // Default metadata
+                data: { full_name: fullName || email.split('@')[0] } // Use provided fullName
             }
         });
 

@@ -21,6 +21,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     const [mode, setMode] = useState<'signin' | 'signup' | 'magiclink' | 'qr' | 'success'>('signin');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [fullName, setFullName] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const [qrSessionId, setQrSessionId] = useState<string>('');
@@ -113,7 +114,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         email,
-                        password
+                        password,
+                        fullName
                     }),
                 });
 
@@ -229,6 +231,17 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         <form onSubmit={handleEmailAuth} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                             {error && <p style={{ color: '#e50914', fontSize: '0.9rem', margin: 0 }}>{error}</p>}
                             {message && <p style={{ color: '#46d369', fontSize: '0.9rem', margin: 0 }}>{message}</p>}
+
+                            {mode === 'signup' && (
+                                <input
+                                    type="text"
+                                    placeholder="Full Name"
+                                    required
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
+                                    style={{ padding: '12px', background: '#333', border: 'none', borderRadius: '4px', color: 'white' }}
+                                />
+                            )}
 
                             <input
                                 type="email"
