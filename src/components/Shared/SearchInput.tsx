@@ -112,6 +112,7 @@ export default function SearchInput({ initialQuery = '' }: { initialQuery?: stri
                                     alt={movie.title || movie.name || 'Poster'}
                                     width={40}
                                     height={60}
+                                    unoptimized
                                     style={{ objectFit: 'cover', borderRadius: '4px' }}
                                 />
                             </div>

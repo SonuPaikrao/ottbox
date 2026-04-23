@@ -23,6 +23,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
                     height={300}
                     className={styles.image}
                     loading="lazy"
+                    unoptimized
                     sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 15vw"
                     placeholder="blur"
                     blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzIyMiIvPjwvc3ZnPg=="

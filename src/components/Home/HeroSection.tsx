@@ -53,6 +53,7 @@ export default function HeroSection({ movies }: { movies: Movie[] }) {
                         fill
                         className={styles.image}
                         priority
+                        unoptimized
                         sizes="100vw"
                         placeholder="blur"
                         blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxOTIwIiBoZWlnaHQ9IjEwODAiIGZpbGw9IiMxMTEiLz48L3N2Zz4="

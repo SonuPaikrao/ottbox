@@ -88,6 +88,7 @@ export default async function TitlePage(props: { params: Promise<{ id: string }>
                         height={450}
                         className={styles.poster}
                         priority
+                        unoptimized
                         sizes="(max-width: 768px) 80vw, 300px"
                         placeholder="blur"
                         blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQ1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQ1MCIgZmlsbD0iIzIyMiIvPjwvc3ZnPg=="

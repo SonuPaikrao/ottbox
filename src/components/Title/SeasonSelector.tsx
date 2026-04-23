@@ -109,6 +109,7 @@ export default function SeasonSelector({ tvId, seasons, onEpisodeSelect }: Seaso
                                         fill
                                         style={{ objectFit: 'cover' }}
                                         loading="lazy"
+                                        unoptimized
                                         sizes="(max-width: 768px) 40vw, 20vw"
                                     />
                                 ) : (

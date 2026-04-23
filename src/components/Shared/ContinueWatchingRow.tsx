@@ -31,6 +31,7 @@ export default function ContinueWatchingRow() {
                                 alt={item.title}
                                 fill
                                 className={styles.poster}
+                                unoptimized
                                 sizes="(max-width: 768px) 40vw, 20vw"
                                 loading="lazy"
                                 placeholder="blur"

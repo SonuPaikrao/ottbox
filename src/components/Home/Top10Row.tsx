@@ -24,6 +24,7 @@ export default function Top10Row({ movies }: { movies: Movie[] }) {
                                 height={240}
                                 className={styles.image}
                                 loading="lazy"
+                                unoptimized
                                 sizes="(max-width: 768px) 130px, 170px"
                                 placeholder="blur"
                                 blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYwIiBoZWlnaHQ9IjI0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTYwIiBoZWlnaHQ9IjI0MCIgZmlsbD0iIzIyMiIvPjwvc3ZnPg=="

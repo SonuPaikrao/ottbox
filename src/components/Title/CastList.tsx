@@ -20,6 +20,7 @@ export default function CastList({ cast }: { cast: CastMember[] }) {
                                     style={{ objectFit: 'cover' }}
                                     sizes="120px"
                                     loading="lazy"
+                                    unoptimized
                                     placeholder="blur"
                                     blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=="
                                 />
