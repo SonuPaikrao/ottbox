@@ -1,15 +1,29 @@
-import React from 'react';
-import Navbar from '@/components/Navbar/Navbar';
+import { discoverMoviesByGenre } from '@/lib/api';
+import InfiniteMovieGrid from '@/components/Shared/InfiniteMovieGrid';
+import styles from '@/app/page.module.css';
 
-export default function MoviesPage() {
+export const metadata = {
+    title: 'Explore Movies - OTT Box',
+    description: 'Discover the latest and greatest movies.',
+};
+
+export default async function MoviesPage() {
+    const initialMovies = await discoverMoviesByGenre('movies');
+
     return (
-        <div style={{ paddingTop: '80px', paddingLeft: '4%', paddingRight: '4%', color: 'white' }}>
-            <h1>Movies</h1>
-            <p>Explore our vast collection of movies.</p>
-            {/* TODO: Add Movie Grid Component here */}
-            <div style={{ marginTop: '20px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
-                <p style={{ color: '#999' }}>Loading movies...</p>
+        <main className={styles.main}>
+            <div className="container" style={{ paddingTop: '100px' }}>
+                <header style={{ marginBottom: '40px' }}>
+                    <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '10px' }}>Movies</h1>
+                    <p style={{ color: '#888', fontSize: '1.1rem' }}>Browse our full collection of cinema.</p>
+                </header>
+
+                <InfiniteMovieGrid 
+                    initialMovies={initialMovies} 
+                    genreId="movies" 
+                    type="movie"
+                />
             </div>
-        </div>
+        </main>
     );
 }

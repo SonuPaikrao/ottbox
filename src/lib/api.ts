@@ -58,6 +58,19 @@ export const fetchTrending = async (): Promise<Movie[]> => {
     }
 };
 
+export const fetchTrendingPaginated = async (page: number = 1): Promise<Movie[]> => {
+    try {
+        const res = await fetch(`${BASE_URL}/trending/all/week?api_key=${API_KEY}&page=${page}`, {
+            next: { revalidate: 3600 }
+        });
+        const data = await res.json();
+        return data.results || [];
+    } catch (error) {
+        console.error("Failed to fetch paginated trending:", error);
+        return [];
+    }
+};
+
 export const fetchTopRated = async (): Promise<Movie[]> => {
     try {
         const res = await fetch(`${BASE_URL}/movie/top_rated?api_key=${API_KEY}`, {
@@ -188,6 +201,13 @@ export const discoverMoviesByGenre = async (genreId?: string, page: number = 1, 
         } else if (genreId === 'movies') {
             type = 'movie';
             // url already set for movie
+        } else if (genreId === 'trending') {
+            // Use trending API instead of discover
+            const res = await fetch(`${BASE_URL}/trending/all/week?api_key=${API_KEY}&page=${page}`, {
+                next: { revalidate: 3600 }
+            });
+            const data = await res.json();
+            return data.results || [];
         } else if (genreId) {
             // Normal genre ID
             url += `&with_genres=${genreId}`;
