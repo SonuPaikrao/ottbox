@@ -119,29 +119,44 @@ export default function Navbar() {
                                     onClick={() => setShowProfileMenu(!showProfileMenu)}
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: '#E50914', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                                        {user.email?.[0].toUpperCase()}
+                                    <div className={styles.avatarContainer}>
+                                        {user.user_metadata?.avatar_url ? (
+                                            <NextImage
+                                                src={user.user_metadata.avatar_url}
+                                                alt={user.user_metadata.full_name || 'Profile'}
+                                                fill
+                                                className={styles.avatarImage}
+                                                unoptimized
+                                            />
+                                        ) : (
+                                            <div className={styles.avatarPlaceholder}>
+                                                {user.email?.[0].toUpperCase()}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* Dropdown Menu */}
+                                {/* Professional Dropdown Menu */}
                                 {showProfileMenu && (
-                                    <div style={{
-                                        position: 'absolute', top: '40px', right: 0,
-                                        background: '#141414', border: '1px solid #333',
-                                        borderRadius: '4px', padding: '10px', minWidth: '150px',
-                                        display: 'flex', flexDirection: 'column', gap: '5px'
-                                    }}>
-                                        <div style={{ padding: '5px 10px', fontSize: '0.8rem', color: '#999', borderBottom: '1px solid #333', marginBottom: '5px' }}>
-                                            {user.email}
+                                    <div className={styles.profileDropdown}>
+                                        <div className={styles.dropdownHeader}>
+                                            <span className={styles.userName}>
+                                                {user.user_metadata?.full_name || user.user_metadata?.name || 'User'}
+                                            </span>
+                                            <span className={styles.userEmail}>{user.email}</span>
                                         </div>
-                                        <Link href="/watchlist" style={{ padding: '8px 10px', color: 'white', textDecoration: 'none', fontSize: '0.9rem', borderRadius: '4px', transition: 'background 0.2s' }} className="hover:bg-zinc-800">
+
+                                        <Link
+                                            href="/watchlist"
+                                            className={styles.dropdownItem}
+                                            onClick={() => setShowProfileMenu(false)}
+                                        >
                                             My Watchlist
                                         </Link>
+
                                         <button
                                             onClick={() => { signOut(); setShowProfileMenu(false); }}
-                                            style={{ padding: '8px 10px', color: '#ff4d4d', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontSize: '0.9rem', borderRadius: '4px' }}
-                                            className="hover:bg-zinc-800"
+                                            className={`${styles.dropdownItem} ${styles.signOutBtn}`}
                                         >
                                             Sign Out
                                         </button>
