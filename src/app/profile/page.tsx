@@ -60,10 +60,15 @@ export default function ProfilePage() {
             if (error) throw error;
             
             setShowSuccess(true);
-            setTimeout(() => setShowSuccess(false), 3000);
             
-            // Refresh page to update navbar etc
-            window.location.reload();
+            // Wait for 1.5s to show toast/success then redirect
+            setTimeout(() => {
+                setShowSuccess(false);
+                router.push('/');
+                // Refresh to update navbar avatar
+                router.refresh();
+            }, 1500);
+            
         } catch (err) {
             console.error('Failed to update profile:', err);
             alert('Failed to update profile. Please try again.');

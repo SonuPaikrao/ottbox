@@ -110,11 +110,24 @@
 }
 
 .successMsg {
-    background: rgba(70, 211, 105, 0.1);
-    color: #46d369;
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    text-align: center;
-    font-weight: 500;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #46d369;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 50px;
+    z-index: 2000;
+    font-weight: 600;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { transform: translate(-50%, -100%); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
 }
